@@ -1,8 +1,10 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Download, FileText, UploadCloud } from 'lucide-react';
+import { Download, FileText, Search, UploadCloud } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Index({ documents, projets, canUpload }) {
+    const [search, setSearch] = useState('');
     const form = useForm({ projet_id: projets[0]?.id ?? '', fichier: null });
 
     const submit = (event) => {
@@ -14,16 +16,37 @@ export default function Index({ documents, projets, canUpload }) {
         });
     };
 
+    const filtered = documents.filter((d) =>
+        !search || d.titre_fichier.toLowerCase().includes(search.toLowerCase())
+            || d.projet?.titre?.toLowerCase().includes(search.toLowerCase())
+    );
+
+    const totalVersions = documents.reduce((sum, d) => sum + (d.version || 1), 0);
+
     return (
         <AuthenticatedLayout header={<h1 className="truncate text-xl font-semibold text-white">Documents</h1>}>
             <Head title="Documents" />
 
             <div className="space-y-6">
+                <section className="glass-card overflow-hidden p-6 text-white">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <span className="status-pill bg-white/10 text-white/90 mb-3 inline-flex">
+                                {documents.length} document{documents.length !== 1 ? 's' : ''} — {totalVersions} version{totalVersions !== 1 ? 's' : ''}
+                            </span>
+                            <h2 className="text-2xl font-semibold tracking-tight">Documents & Livrables</h2>
+                            <p className="mt-1 max-w-xl text-sm text-slate-200/80">
+                                Historique des versions PDF par projet. Chaque depot incremente automatiquement la version.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+
                 {canUpload && (
                     <section className="panel-card border-dashed border-teal-200 p-6">
                         <div className="mb-5">
-                            <h2 className="text-lg font-semibold text-slate-950">Dépôt de livrable PDF</h2>
-                            <p className="mt-1 text-sm text-slate-500">Chaque téléversement incrémente automatiquement la version du document.</p>
+                            <h2 className="text-lg font-semibold text-slate-950">Depot de livrable PDF</h2>
+                            <p className="mt-1 text-sm text-slate-500">PDF uniquement - Max 10 Mo.</p>
                         </div>
                         <form onSubmit={submit} className="grid gap-4 lg:grid-cols-[1fr_1fr_auto] lg:items-end">
                             <div>
@@ -34,24 +57,37 @@ export default function Index({ documents, projets, canUpload }) {
                             </div>
                             <label className="flex cursor-pointer items-center justify-center gap-3 rounded-3xl border border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-sm text-slate-600 hover:bg-slate-100">
                                 <UploadCloud size={20} />
-                                <span>{form.data.fichier ? form.data.fichier.name : 'Glisser ou sélectionner un PDF'}</span>
+                                <span>{form.data.fichier ? form.data.fichier.name : 'Glisser ou selectionner un PDF'}</span>
                                 <input type="file" accept="application/pdf" className="hidden" onChange={(e) => form.setData('fichier', e.target.files[0])} />
                             </label>
                             <button disabled={form.processing || !form.data.fichier} className="soft-button soft-button-primary disabled:opacity-50">
-                                Déposer
+                                Deposer
                             </button>
                         </form>
                         {form.errors.fichier && <p className="mt-2 text-sm text-red-600">{form.errors.fichier}</p>}
                     </section>
                 )}
 
+                <div className="flex items-center gap-3">
+                    <div className="relative flex-1">
+                        <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+                        <input
+                            type="text"
+                            className="soft-input pl-10"
+                            placeholder="Rechercher un document ou un projet..."
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                    </div>
+                </div>
+
                 <section className="panel-card overflow-hidden">
                     <div className="border-b border-slate-200/80 p-5">
-                        <h2 className="text-base font-semibold text-slate-950">Livrables déposés</h2>
-                        <p className="mt-1 text-sm text-slate-500">Historique des versions PDF par projet.</p>
+                        <h2 className="text-base font-semibold text-slate-950">Livrales depotes</h2>
+                        <p className="mt-1 text-sm text-slate-500">{filtered.length} document{filtered.length !== 1 ? 's' : ''} affiche{filtered.length !== 1 ? 's' : ''}.</p>
                     </div>
                     <div className="divide-y divide-slate-100">
-                        {documents.map((document) => (
+                        {filtered.map((document) => (
                             <div key={document.id} className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
                                 <div className="flex items-start gap-3">
                                     <div className="rounded-2xl bg-red-50 p-3 text-red-600">
@@ -59,15 +95,22 @@ export default function Index({ documents, projets, canUpload }) {
                                     </div>
                                     <div>
                                         <p className="font-medium text-slate-950">{document.titre_fichier}</p>
-                                        <p className="text-sm text-slate-500">{document.projet?.titre} • version {document.version} • {document.auteur?.prenom} {document.auteur?.nom}</p>
+                                        <p className="text-sm text-slate-500">
+                                            {document.projet?.titre} - v{document.version} - {document.auteur?.prenom} {document.auteur?.nom}
+                                        </p>
                                     </div>
                                 </div>
-                                <Link href={route('documents.download', document.id)} className="soft-button soft-button-secondary w-fit">
-                                    <Download size={16} /> Télécharger
-                                </Link>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-xs text-slate-400">
+                                        {new Date(document.date_depot).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })}
+                                    </span>
+                                    <Link href={route('documents.download', document.id)} className="soft-button soft-button-secondary w-fit text-xs">
+                                        <Download size={14} /> Telecharger
+                                    </Link>
+                                </div>
                             </div>
                         ))}
-                        {documents.length === 0 && <div className="p-10 text-center text-slate-500">Aucun document PDF déposé.</div>}
+                        {filtered.length === 0 && <div className="p-10 text-center text-slate-500">Aucun document trouve.</div>}
                     </div>
                 </section>
             </div>

@@ -2,19 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Projets\StoreCommentaireRequest;
 use App\Models\ProjetAcademique;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 
 class CommentaireController extends Controller
 {
-    public function store(Request $request, ProjetAcademique $projet): RedirectResponse
+    public function store(StoreCommentaireRequest $request, ProjetAcademique $projet): RedirectResponse
     {
-        $this->authorize('update', $projet);
-
-        $validated = $request->validate([
-            'contenu' => ['required', 'string', 'max:2000'],
-        ]);
+        $validated = $request->validated();
 
         $projet->commentaires()->create([
             'user_id' => $request->user()->id,

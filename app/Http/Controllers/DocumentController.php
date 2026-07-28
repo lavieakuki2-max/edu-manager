@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Projets\StoreDocumentRequest;
 use App\Models\Document;
 use App\Models\ProjetAcademique;
 use Illuminate\Http\RedirectResponse;
@@ -33,13 +34,9 @@ class DocumentController extends Controller
         ]);
     }
 
-    public function store(Request $request, ProjetAcademique $projet): RedirectResponse
+    public function store(StoreDocumentRequest $request, ProjetAcademique $projet): RedirectResponse
     {
-        $this->authorize('upload', [Document::class, $projet]);
-
-        $validated = $request->validate([
-            'fichier' => ['required', 'file', 'mimes:pdf', 'max:10240'],
-        ]);
+        $validated = $request->validated();
 
         $version = ((int) $projet->documents()->max('version')) + 1;
         $path = $validated['fichier']->store("projets/{$projet->id}/documents", 'public');
@@ -52,7 +49,7 @@ class DocumentController extends Controller
             'date_depot' => now(),
         ]);
 
-        return back()->with('success', "Document PDF déposé en version {$version}.");
+        return back()->with('success', "Document PDF depose en version {$version}.");
     }
 
     public function download(Document $document)

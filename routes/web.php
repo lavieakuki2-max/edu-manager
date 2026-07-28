@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CommentaireController;
@@ -23,9 +23,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/projets', [ProjetController::class, 'index'])->name('projets.index');
+    Route::get('/projets/{projet}', [ProjetController::class, 'show'])->name('projets.show');
     Route::post('/projets', [ProjetController::class, 'store'])->middleware('role:etudiant')->name('projets.store');
     Route::patch('/projets/{projet}/statut', [ProjetController::class, 'updateStatut'])->middleware('role:enseignant,admin')->name('projets.statut');
-    Route::post('/projets/{projet}/commentaires', [CommentaireController::class, 'store'])->middleware('role:enseignant,admin')->name('projets.commentaires.store');
+    Route::post('/projets/{projet}/commentaires', [CommentaireController::class, 'store'])->name('projets.commentaires.store');
 
     Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
     Route::post('/projets/{projet}/documents', [DocumentController::class, 'store'])->middleware('role:etudiant')->name('documents.store');
@@ -36,6 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/projets/{projet}/soutenance', [AdminController::class, 'planifierSoutenance'])->name('admin.projets.soutenance');
         Route::get('/admin/projets/{projet}/lettre-stage', [AdminController::class, 'lettreStage'])->name('admin.pdf.lettre-stage');
         Route::get('/admin/projets/{projet}/fiche-cotation', [AdminController::class, 'ficheCotation'])->name('admin.pdf.fiche-cotation');
+        Route::get('/admin/rapport-global', [AdminController::class, 'rapportGlobal'])->name('admin.pdf.rapport-global');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

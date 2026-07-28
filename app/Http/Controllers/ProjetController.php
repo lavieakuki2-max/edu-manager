@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Projets\StoreProjetRequest;
+use App\Http\Requests\Projets\UpdateStatutRequest;
 use App\Models\Enseignant;
 use App\Models\Entreprise;
 use App\Models\ProjetAcademique;
+use App\Services\WorkflowService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -41,22 +44,35 @@ class ProjetController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function show(ProjetAcademique $projet)
     {
-        $this->authorize('submit', ProjetAcademique::class);
+        $this->authorize('view', $projet);
 
-        $validated = $request->validate([
-            'titre' => ['required', 'string', 'max:255'],
-            'description' => ['required', 'string'],
-            'type' => ['required', 'in:Stage,Memoire'],
-            'annee_academique' => ['required', 'string', 'max:20'],
-            'theme_recherche' => ['nullable', 'required_if:type,Memoire', 'string', 'max:255'],
-            'mots_cles' => ['nullable', 'string', 'max:255'],
-            'entreprise_id' => ['nullable', 'required_if:type,Stage', 'exists:entreprises,id'],
-            'date_debut' => ['nullable', 'required_if:type,Stage', 'date'],
-            'date_fin' => ['nullable', 'required_if:type,Stage', 'date', 'after_or_equal:date_debut'],
-            'objectifs_stage' => ['nullable', 'required_if:type,Stage', 'string'],
+        $user = request()->user();
+        $workflow = app(WorkflowService::class);
+
+        $projet->load([
+            'etudiant.user',
+            'enseignant.user',
+            'memoire',
+            'stage.entreprise',
+            'documents.auteur',
+            'commentaires.auteur',
+            'soutenance',
+            'historique.user',
         ]);
+
+        return Inertia::render('Projets/Show', [
+            'projet' => $projet,
+            'canAdmin' => $user->role === 'admin',
+            'availableTransitions' => $workflow->getAvailableTransitions($projet, $user),
+            'workflowStatuses' => WorkflowService::STATUSES,
+        ]);
+    }
+
+    public function store(StoreProjetRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
 
         $projet = ProjetAcademique::create([
             'titre' => $validated['titre'],
@@ -84,15 +100,12 @@ class ProjetController extends Controller
         return back()->with('success', 'Sujet soumis avec succès.');
     }
 
-    public function updateStatut(Request $request, ProjetAcademique $projet): RedirectResponse
+    public function updateStatut(UpdateStatutRequest $request, ProjetAcademique $projet): RedirectResponse
     {
-        $this->authorize('update', $projet);
+        $validated = $request->validated();
 
-        $validated = $request->validate([
-            'statut_actuel' => ['required', 'in:Sujet Soumis,En Cours,Prêt pour Soutenance,Validé'],
-        ]);
-
-        $projet->update($validated);
+        $workflow = app(WorkflowService::class);
+        $workflow->transition($projet, $validated['statut_actuel'], $validated['commentaire'] ?? null);
 
         return back()->with('success', 'Statut mis à jour.');
     }

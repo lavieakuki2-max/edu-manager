@@ -44,4 +44,9 @@ class ProjetAcademique extends Model
     {
         return $this->hasOne(Soutenance::class, 'projet_id');
     }
+
+    public function historique()
+    {
+        return $this->hasMany(ProjetStatutHistorique::class, 'projet_id')->latest();
+    }
 }
