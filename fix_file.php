@@ -1,0 +1,1 @@
+﻿<?php file_put_contents("D:/ProjetTutoreL2/edumanager1/app/Policies/ProjetAcademiquePolicy.php", file_get_contents("D:/ProjetTutoreL2/edumanager1/app/Policies/ProjetAcademiquePolicy_new.php")); echo "Done: " . filesize("D:/ProjetTutoreL2/edumanager1/app/Policies/ProjetAcademiquePolicy.php") . " bytes\n";
