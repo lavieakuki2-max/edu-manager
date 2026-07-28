@@ -16,7 +16,7 @@ class StoreProjetRequest extends FormRequest
         return [
             'titre' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
-            'type' => ['required', 'in:Stage,Memoire'],
+            'type' => ['required', 'in:Stage,Memoire,Projet_Tutore'],
             'annee_academique' => ['required', 'string', 'max:20'],
             'theme_recherche' => ['nullable', 'required_if:type,Memoire', 'string', 'max:255'],
             'mots_cles' => ['nullable', 'string', 'max:255'],

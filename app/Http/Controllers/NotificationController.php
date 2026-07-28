@@ -2,29 +2,53 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ProjetStatutHistorique;
+use App\Models\Notification;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+use Illuminate\Http\RedirectResponse;
 
 class NotificationController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
         $user = $request->user();
 
-        $notifications = ProjetStatutHistorique::with(['projet', 'user'])
+        $notifications = Notification::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
-            ->limit(20)
-            ->get()
-            ->filter(function ($n) use ($user) {
-                if ($user->role === 'admin') return true;
-                if ($user->role === 'enseignant') {
-                    return $n->projet?->enseignant_id === $user->enseignant?->id;
-                }
-                return $n->projet?->etudiant_id === $user->etudiant?->id;
-            })
-            ->values();
+            ->limit(30)
+            ->get();
 
-        return response()->json($notifications);
+        $unreadCount = Notification::where('user_id', $user->id)
+            ->where('est_lu', false)
+            ->count();
+
+        return response()->json([
+            'notifications' => $notifications,
+            'unread_count' => $unreadCount,
+        ]);
+    }
+
+    public function markAsRead(Request $request, Notification $notification): JsonResponse
+    {
+        if ($notification->user_id !== $request->user()->id) {
+            abort(403);
+        }
+
+        $notification->update(['est_lu' => true]);
+
+        $unreadCount = Notification::where('user_id', $request->user()->id)
+            ->where('est_lu', false)
+            ->count();
+
+        return response()->json(['unread_count' => $unreadCount]);
+    }
+
+    public function markAllAsRead(Request $request): JsonResponse
+    {
+        Notification::where('user_id', $request->user()->id)
+            ->where('est_lu', false)
+            ->update(['est_lu' => true]);
+
+        return response()->json(['unread_count' => 0]);
     }
 }

@@ -3,7 +3,7 @@ import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import {
     UserPlus, Search, Eye, Edit, Trash2, Shield, GraduationCap,
-    BookOpen, Users, X, Check, Mail, Phone, MapPin, Briefcase, Calendar, EyeOff,
+    BookOpen, Users as UsersIcon, X, Check, Mail, Phone, MapPin, Briefcase, Calendar, EyeOff,
 } from 'lucide-react';
 
 const roleColors = {
@@ -138,7 +138,7 @@ export default function Users({ users = [], stats = {} }) {
 
                 <div className="grid gap-4 sm:grid-cols-4">
                     {[
-                        { label: 'Total', value: stats.total || users.length, icon: Users, tone: 'from-slate-500 to-slate-600' },
+                        { label: 'Total', value: stats.total || users.length, icon: UsersIcon, tone: 'from-slate-500 to-slate-600' },
                         { label: 'Etudiants', value: stats.etudiants || 0, icon: GraduationCap, tone: 'from-emerald-500 to-green-500' },
                         { label: 'Enseignants', value: stats.enseignants || 0, icon: BookOpen, tone: 'from-blue-500 to-indigo-500' },
                         { label: 'Admins', value: stats.admins || 0, icon: Shield, tone: 'from-amber-500 to-orange-500' },
@@ -193,7 +193,7 @@ export default function Users({ users = [], stats = {} }) {
 
                     <div className="grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3">
                         {filtered.map((user) => {
-                            const RoleIcon = roleIcons[user.role] || Users;
+                            const RoleIcon = roleIcons[user.role] || UsersIcon;
                             return (
                                 <div key={user.id} className="panel-card overflow-hidden transition hover:shadow-lg">
                                     <div className="p-5">
@@ -263,7 +263,7 @@ export default function Users({ users = [], stats = {} }) {
 
                     {filtered.length === 0 && (
                         <div className="p-16 text-center">
-                            <Users className="mx-auto text-slate-300" size={40} />
+                            <UsersIcon className="mx-auto text-slate-300" size={40} />
                             <p className="mt-4 text-sm font-medium text-slate-500">Aucun utilisateur trouvé.</p>
                         </div>
                     )}

@@ -6,6 +6,7 @@ use App\Http\Requests\Admin\AssignEnseignantRequest;
 use App\Http\Requests\Admin\PlanifierSoutenanceRequest;
 use App\Models\ProjetAcademique;
 use App\Models\Soutenance;
+use App\Services\NotificationService;
 use App\Services\WorkflowService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
@@ -23,6 +24,8 @@ class AdminController extends Controller
         if ($workflow->canTransition($projet, 'En Cours', $request->user())) {
             $workflow->transition($projet, 'En Cours', 'Encadreur assigné');
         }
+
+        NotificationService::notifierAttributionEnseignant($projet);
 
         return back()->with('success', 'Encadreur assigné.');
     }

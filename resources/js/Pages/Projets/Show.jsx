@@ -1,7 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import {
-    ArrowLeft, BookOpen, Briefcase, CheckCircle2, Clock, Download, FileText, History, Send, UploadCloud,
+    ArrowLeft, BookOpen, Briefcase, CheckCircle2, Clock, Download, Eye, FileText, History, Send, Shield, UploadCloud,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -32,6 +32,7 @@ const transitionLabels = {
 const workflowSteps = {
     Stage: ['Sujet Soumis', 'En Cours', 'Prêt pour Soutenance', 'Validé'],
     Memoire: ['Sujet Soumis', 'En Cours', 'Prêt pour Soutenance', 'Validé'],
+    Projet_Tutore: ['Sujet Soumis', 'En Cours', 'Prêt pour Soutenance', 'Validé'],
 };
 
 function getWorkflowIndex(statut) {
@@ -39,7 +40,31 @@ function getWorkflowIndex(statut) {
     return map[statut] ?? 0;
 }
 
-export default function Show({ projet, canAdmin, availableTransitions = [], workflowStatuses = [] }) {
+const typeIcons = {
+    Stage: Briefcase,
+    Memoire: BookOpen,
+    Projet_Tutore: Shield,
+};
+
+const typeLabels = {
+    Stage: 'Stage',
+    Memoire: 'Mémoire',
+    Projet_Tutore: 'Projet Tutoré',
+};
+
+const typeColors = {
+    Stage: 'bg-blue-400/20 text-blue-300',
+    Memoire: 'bg-purple-400/20 text-purple-300',
+    Projet_Tutore: 'bg-amber-400/20 text-amber-300',
+};
+
+const typeBg = {
+    Stage: 'bg-blue-50 text-blue-600',
+    Memoire: 'bg-purple-50 text-purple-600',
+    Projet_Tutore: 'bg-amber-50 text-amber-600',
+};
+
+export default function Show({ projet, canAdmin, canComment = false, canUpload = false, isSupervision = false, availableTransitions = [], workflowStatuses = [] }) {
     const [activeTab, setActiveTab] = useState('info');
     const [showUpload, setShowUpload] = useState(false);
     const [showTransition, setShowTransition] = useState(false);
@@ -78,7 +103,8 @@ export default function Show({ projet, canAdmin, availableTransitions = [], work
 
     const steps = workflowSteps[projet.type] || workflowSteps.Stage;
     const activeIdx = getWorkflowIndex(projet.statut_actuel);
-    const TypeIcon = projet.type === 'Stage' ? Briefcase : BookOpen;
+    const TypeIcon = typeIcons[projet.type] || Briefcase;
+    const typeColor = typeColors[projet.type] || typeColors.Stage;
 
     const tabs = [
         { key: 'info', label: 'Informations' },
@@ -99,11 +125,18 @@ export default function Show({ projet, canAdmin, availableTransitions = [], work
                 <section className="glass-card overflow-hidden p-6 text-white">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-start gap-4">
-                            <div className={`rounded-2xl p-3 ${projet.type === 'Stage' ? 'bg-blue-400/20 text-blue-300' : 'bg-purple-400/20 text-purple-300'}`}>
+                            <div className={`rounded-2xl p-3 ${typeColor}`}>
                                 <TypeIcon size={24} />
                             </div>
                             <div>
-                                <span className="status-pill bg-white/10 text-white/80 mb-2">{projet.type} — {projet.annee_academique}</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="status-pill bg-white/10 text-white/80 mb-2">{typeLabels[projet.type] || projet.type} — {projet.annee_academique}</span>
+                                    {isSupervision && (
+                                        <span className="status-pill bg-amber-400/20 text-amber-300 mb-2">
+                                            <Eye size={12} className="mr-1 inline" /> Mode supervision
+                                        </span>
+                                    )}
+                                </div>
                                 <h2 className="text-2xl font-semibold tracking-tight">{projet.titre}</h2>
                                 <p className="mt-1 text-sm text-slate-200/80">
                                     Étudiant : {projet.etudiant?.user?.prenom} {projet.etudiant?.user?.nom}
@@ -219,6 +252,16 @@ export default function Show({ projet, canAdmin, availableTransitions = [], work
                                 </div>
                             )}
 
+                            {projet.type === 'Projet_Tutore' && (
+                                <div className="panel-card p-6">
+                                    <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Détails du projet tutoré</h3>
+                                    <dl className="mt-3 space-y-2 text-sm">
+                                        <div className="flex justify-between"><dt className="text-slate-500">Type</dt><dd className="font-medium text-slate-900">Projet Tutoré</dd></div>
+                                        <div className="flex justify-between"><dt className="text-slate-500">Année</dt><dd className="font-medium text-slate-900">{projet.annee_academique}</dd></div>
+                                    </dl>
+                                </div>
+                            )}
+
                             {projet.soutenance && (
                                 <div className="panel-card p-6">
                                     <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Soutenance</h3>
@@ -237,9 +280,11 @@ export default function Show({ projet, canAdmin, availableTransitions = [], work
                             <div className="panel-card p-6 lg:col-span-2">
                                 <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Actions administrateur</h3>
                                 <div className="mt-4 flex flex-wrap gap-3">
-                                    <a href={route('admin.pdf.lettre-stage', projet.id)} className="soft-button soft-button-secondary text-xs">
-                                        <FileText size={14} /> Lettre de stage
-                                    </a>
+                                    {projet.type === 'Stage' && (
+                                        <a href={route('admin.pdf.lettre-stage', projet.id)} className="soft-button soft-button-secondary text-xs">
+                                            <FileText size={14} /> Lettre de stage
+                                        </a>
+                                    )}
                                     <a href={route('admin.pdf.fiche-cotation', projet.id)} className="soft-button soft-button-secondary text-xs">
                                         <FileText size={14} /> Fiche de cotation
                                     </a>
@@ -254,30 +299,44 @@ export default function Show({ projet, canAdmin, availableTransitions = [], work
 
                 {activeTab === 'documents' && (
                     <div className="space-y-4">
-                        <div className="panel-card border-dashed border-teal-200 p-6">
-                            <div className="mb-4 flex items-center justify-between">
-                                <div>
-                                    <h3 className="text-base font-semibold text-slate-950">Dépôt de document</h3>
-                                    <p className="mt-1 text-sm text-slate-500">PDF uniquement · Max 10 Mo · Incrémentation automatique de la version.</p>
-                                </div>
-                                <button onClick={() => setShowUpload(!showUpload)} className="soft-button soft-button-primary text-xs">
-                                    <UploadCloud size={16} /> Déposer
-                                </button>
-                            </div>
-                            {showUpload && (
-                                <form onSubmit={submitUpload} className="flex items-end gap-4">
-                                    <label className="flex-1 cursor-pointer rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-center text-sm text-slate-600 hover:bg-slate-100">
-                                        <UploadCloud size={18} className="mx-auto mb-1" />
-                                        {uploadForm.data.fichier ? uploadForm.data.fichier.name : 'Sélectionner un PDF'}
-                                        <input type="file" accept="application/pdf" className="hidden" onChange={(e) => uploadForm.setData('fichier', e.target.files[0])} />
-                                    </label>
-                                    <button type="submit" disabled={uploadForm.processing || !uploadForm.data.fichier} className="soft-button soft-button-primary disabled:opacity-50 text-xs">
-                                        Envoyer
+                        {canUpload && !isSupervision && (
+                            <div className="panel-card border-dashed border-teal-200 p-6">
+                                <div className="mb-4 flex items-center justify-between">
+                                    <div>
+                                        <h3 className="text-base font-semibold text-slate-950">Dépôt de document</h3>
+                                        <p className="mt-1 text-sm text-slate-500">PDF uniquement · Max 10 Mo · Incrémentation automatique de la version.</p>
+                                    </div>
+                                    <button onClick={() => setShowUpload(!showUpload)} className="soft-button soft-button-primary text-xs">
+                                        <UploadCloud size={16} /> Déposer
                                     </button>
-                                </form>
-                            )}
-                            {uploadForm.errors.fichier && <p className="mt-2 text-sm text-red-600">{uploadForm.errors.fichier}</p>}
-                        </div>
+                                </div>
+                                {showUpload && (
+                                    <form onSubmit={submitUpload} className="flex items-end gap-4">
+                                        <label className="flex-1 cursor-pointer rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-center text-sm text-slate-600 hover:bg-slate-100">
+                                            <UploadCloud size={18} className="mx-auto mb-1" />
+                                            {uploadForm.data.fichier ? uploadForm.data.fichier.name : 'Sélectionner un PDF'}
+                                            <input type="file" accept="application/pdf" className="hidden" onChange={(e) => uploadForm.setData('fichier', e.target.files[0])} />
+                                        </label>
+                                        <button type="submit" disabled={uploadForm.processing || !uploadForm.data.fichier} className="soft-button soft-button-primary disabled:opacity-50 text-xs">
+                                            Envoyer
+                                        </button>
+                                    </form>
+                                )}
+                                {uploadForm.errors.fichier && <p className="mt-2 text-sm text-red-600">{uploadForm.errors.fichier}</p>}
+                            </div>
+                        )}
+
+                        {isSupervision && (
+                            <div className="panel-card border-l-4 border-l-amber-400 p-5">
+                                <div className="flex items-center gap-3">
+                                    <Eye size={18} className="text-amber-500" />
+                                    <div>
+                                        <p className="text-sm font-semibold text-slate-950">Mode supervision</p>
+                                        <p className="text-xs text-slate-500">Vous visualisez les documents en tant qu'administrateur. Le dépôt est réservé à l'étudiant et à l'encadreur.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                         <div className="panel-card overflow-hidden">
                             <div className="divide-y divide-slate-100">
@@ -307,6 +366,18 @@ export default function Show({ projet, canAdmin, availableTransitions = [], work
 
                 {activeTab === 'commentaires' && (
                     <div className="space-y-4">
+                        {isSupervision && (
+                            <div className="panel-card border-l-4 border-l-amber-400 p-5">
+                                <div className="flex items-center gap-3">
+                                    <Eye size={18} className="text-amber-500" />
+                                    <div>
+                                        <p className="text-sm font-semibold text-slate-950">Mode supervision</p>
+                                        <p className="text-xs text-slate-500">Vous visualisez les échanges en tant qu'administrateur. Seuls l'étudiant et l'encadreur peuvent poster des commentaires.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="panel-card overflow-hidden">
                             <div className="divide-y divide-slate-100">
                                 {projet.commentaires?.map((c) => (
@@ -335,24 +406,26 @@ export default function Show({ projet, canAdmin, availableTransitions = [], work
                             </div>
                         </div>
 
-                        <form onSubmit={submitComment} className="panel-card p-4">
-                            <div className="flex gap-3">
-                                <textarea
-                                    className="soft-input min-h-[60px] flex-1"
-                                    placeholder="Écrire un commentaire..."
-                                    value={commentForm.data.contenu}
-                                    onChange={(e) => commentForm.setData('contenu', e.target.value)}
-                                />
-                                <button
-                                    type="submit"
-                                    disabled={commentForm.processing || !commentForm.data.contenu.trim()}
-                                    className="soft-button soft-button-primary self-end disabled:opacity-50"
-                                >
-                                    <Send size={16} />
-                                </button>
-                            </div>
-                            {commentForm.errors.contenu && <p className="mt-2 text-sm text-red-600">{commentForm.errors.contenu}</p>}
-                        </form>
+                        {canComment && !isSupervision && (
+                            <form onSubmit={submitComment} className="panel-card p-4">
+                                <div className="flex gap-3">
+                                    <textarea
+                                        className="soft-input min-h-[60px] flex-1"
+                                        placeholder="Écrire un commentaire..."
+                                        value={commentForm.data.contenu}
+                                        onChange={(e) => commentForm.setData('contenu', e.target.value)}
+                                    />
+                                    <button
+                                        type="submit"
+                                        disabled={commentForm.processing || !commentForm.data.contenu.trim()}
+                                        className="soft-button soft-button-primary self-end disabled:opacity-50"
+                                    >
+                                        <Send size={16} />
+                                    </button>
+                                </div>
+                                {commentForm.errors.contenu && <p className="mt-2 text-sm text-red-600">{commentForm.errors.contenu}</p>}
+                            </form>
+                        )}
                     </div>
                 )}
 

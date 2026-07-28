@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Projets\StoreDocumentRequest;
 use App\Models\Document;
 use App\Models\ProjetAcademique;
+use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -29,8 +30,9 @@ class DocumentController extends Controller
             'documents' => $query->get(),
             'projets' => ProjetAcademique::select('id', 'titre')
                 ->when($user->role === 'etudiant', fn ($q) => $q->where('etudiant_id', $user->etudiant?->id))
+                ->when($user->role === 'enseignant', fn ($q) => $q->where('enseignant_id', $user->enseignant?->id))
                 ->get(),
-            'canUpload' => $user->role === 'etudiant',
+            'canUpload' => $user->role === 'etudiant' || $user->role === 'enseignant',
         ]);
     }
 
@@ -41,13 +43,15 @@ class DocumentController extends Controller
         $version = ((int) $projet->documents()->max('version')) + 1;
         $path = $validated['fichier']->store("projets/{$projet->id}/documents", 'public');
 
-        $projet->documents()->create([
+        $doc = $projet->documents()->create([
             'user_id' => $request->user()->id,
             'titre_fichier' => $validated['fichier']->getClientOriginalName(),
             'chemin_stockage' => $path,
             'version' => $version,
             'date_depot' => now(),
         ]);
+
+        NotificationService::notifierDocumentDepose($projet, $request->user(), $doc->titre_fichier);
 
         return back()->with('success', "Document PDF depose en version {$version}.");
     }

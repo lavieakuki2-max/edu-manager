@@ -7,6 +7,7 @@ use App\Http\Requests\Projets\UpdateStatutRequest;
 use App\Models\Enseignant;
 use App\Models\Entreprise;
 use App\Models\ProjetAcademique;
+use App\Services\NotificationService;
 use App\Services\WorkflowService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -65,6 +66,11 @@ class ProjetController extends Controller
         return Inertia::render('Projets/Show', [
             'projet' => $projet,
             'canAdmin' => $user->role === 'admin',
+            'canComment' => $user->role === 'admin' || $user->role === 'enseignant'
+                ? $projet->enseignant_id === $user->enseignant?->id
+                : $projet->etudiant_id === $user->etudiant?->id,
+            'canUpload' => $user->role === 'etudiant' || $user->role === 'enseignant',
+            'isSupervision' => $user->role === 'admin',
             'availableTransitions' => $workflow->getAvailableTransitions($projet, $user),
             'workflowStatuses' => WorkflowService::STATUSES,
         ]);
@@ -88,7 +94,7 @@ class ProjetController extends Controller
                 'theme_recherche' => $validated['theme_recherche'],
                 'mots_cles' => $validated['mots_cles'] ?? null,
             ]);
-        } else {
+        } elseif ($validated['type'] === 'Stage') {
             $projet->stage()->create([
                 'entreprise_id' => $validated['entreprise_id'],
                 'date_debut' => $validated['date_debut'],
@@ -96,6 +102,8 @@ class ProjetController extends Controller
                 'objectifs_stage' => $validated['objectifs_stage'],
             ]);
         }
+
+        NotificationService::notifierSoumissionSujet($projet);
 
         return back()->with('success', 'Sujet soumis avec succès.');
     }

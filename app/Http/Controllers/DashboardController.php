@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Commentaire;
 use App\Models\Document;
+use App\Models\Notification;
 use App\Models\ProjetAcademique;
 use App\Models\ProjetStatutHistorique;
 use App\Models\User;
@@ -64,6 +65,10 @@ class DashboardController extends Controller
                 ->values();
         }
 
+        $unreadNotifications = Notification::where('user_id', $user->id)
+            ->where('est_lu', false)
+            ->count();
+
         return Inertia::render('Dashboard', [
             'role' => $user->role,
             'userName' => $user->prenom . ' ' . $user->nom,
@@ -72,6 +77,7 @@ class DashboardController extends Controller
             'documentsRecents' => $documentsRecents,
             'recentActivity' => $recentActivity,
             'alertes' => $alertes,
+            'unreadNotifications' => $unreadNotifications,
         ]);
     }
 }

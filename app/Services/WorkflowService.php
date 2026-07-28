@@ -74,5 +74,7 @@ class WorkflowService
             'user_id' => $user->id,
             'commentaire' => $commentaire,
         ]);
+
+        NotificationService::notifierTransitionStatut($projet, $ancienStatut, $targetStatus, $commentaire);
     }
 }

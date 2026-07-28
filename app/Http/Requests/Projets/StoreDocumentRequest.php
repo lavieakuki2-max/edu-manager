@@ -10,8 +10,15 @@ class StoreDocumentRequest extends FormRequest
     {
         $projet = $this->route('projet');
 
-        return $this->user()->role === 'etudiant'
-            && $this->user()->etudiant?->id === $projet->etudiant_id;
+        if ($this->user()->role === 'etudiant') {
+            return $this->user()->etudiant?->id === $projet->etudiant_id;
+        }
+
+        if ($this->user()->role === 'enseignant') {
+            return $this->user()->enseignant?->id === $projet->enseignant_id;
+        }
+
+        return false;
     }
 
     public function rules(): array

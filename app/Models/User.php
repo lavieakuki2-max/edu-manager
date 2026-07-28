@@ -45,6 +45,16 @@ class User extends Authenticatable
         return $this->hasMany(Commentaire::class);
     }
 
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
+
+    public function unreadNotificationsCount(): int
+    {
+        return $this->notifications()->nonLues()->count();
+    }
+
     /**
      * The attributes that should be hidden for serialization.
      *

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Projets\StoreCommentaireRequest;
 use App\Models\ProjetAcademique;
+use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
 
 class CommentaireController extends Controller
@@ -16,6 +17,8 @@ class CommentaireController extends Controller
             'user_id' => $request->user()->id,
             'contenu' => $validated['contenu'],
         ]);
+
+        NotificationService::notifierCommentaire($projet, $request->user());
 
         return back()->with('success', 'Commentaire ajouté.');
     }

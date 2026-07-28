@@ -1,10 +1,14 @@
 ﻿<?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\ProjetController as AdminProjetController;
+use App\Http\Controllers\Admin\RapportController;
 use App\Http\Controllers\CommentaireController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EntrepriseController;
+use App\Http\Controllers\EnseignantController;
+use App\Http\Controllers\EtudiantController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjetController;
@@ -33,10 +37,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/projets/{projet}/commentaires', [CommentaireController::class, 'store'])->name('projets.commentaires.store');
 
     Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
-    Route::post('/projets/{projet}/documents', [DocumentController::class, 'store'])->middleware('role:etudiant')->name('documents.store');
+    Route::post('/projets/{projet}/documents', [DocumentController::class, 'store'])->middleware('role:etudiant,enseignant')->name('documents.store');
     Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
 
+    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
+    Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+
     Route::middleware('role:admin')->group(function () {
+        Route::get('/admin/projets', [AdminProjetController::class, 'index'])->name('admin.projets.index');
         Route::patch('/admin/projets/{projet}/assigner', [AdminController::class, 'assigner'])->name('admin.projets.assigner');
         Route::post('/admin/projets/{projet}/soutenance', [AdminController::class, 'planifierSoutenance'])->name('admin.projets.soutenance');
         Route::get('/admin/projets/{projet}/lettre-stage', [AdminController::class, 'lettreStage'])->name('admin.pdf.lettre-stage');
@@ -58,7 +67,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/admin/soutenances/{soutenance}', [SoutenanceController::class, 'update'])->name('admin.soutenances.update');
         Route::delete('/admin/soutenances/{soutenance}', [SoutenanceController::class, 'destroy'])->name('admin.soutenances.delete');
 
-        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::get('/admin/rapports', [RapportController::class, 'index'])->name('admin.rapports');
+        Route::get('/admin/rapports/statistique', [RapportController::class, 'rapportStatistique'])->name('admin.pdf.statistique');
+        Route::get('/admin/rapports/etudiants-valides', [RapportController::class, 'listeEtudiantsValides'])->name('admin.pdf.etudiants-valides');
+        Route::get('/admin/rapports/lettres-recommandation', [RapportController::class, 'lettresRecommandation'])->name('admin.pdf.lettres-recommandation');
+        Route::get('/admin/rapports/grille-cotation/{projet}', [RapportController::class, 'grilleCotation'])->name('admin.pdf.grille-cotation');
+        Route::get('/admin/rapports/repartition-enseignants', [RapportController::class, 'repartitionEnseignants'])->name('admin.pdf.repartition-enseignants');
+        Route::get('/admin/rapports/annuaire-entreprises', [RapportController::class, 'annuaireEntreprises'])->name('admin.pdf.annuaire-entreprises');
+    });
+
+    Route::middleware('role:enseignant')->group(function () {
+        Route::get('/enseignant/etudiants', [EnseignantController::class, 'mesEtudiants'])->name('enseignant.etudiants');
+        Route::get('/enseignant/commentaires', [EnseignantController::class, 'commentaires'])->name('enseignant.commentaires');
+        Route::get('/enseignant/soutenances', [EnseignantController::class, 'soutenances'])->name('enseignant.soutenances');
+        Route::post('/enseignant/soutenances/{soutenance}/evaluer', [SoutenanceController::class, 'evaluation'])->name('enseignant.soutenances.evaluation');
+    });
+
+    Route::middleware('role:etudiant')->group(function () {
+        Route::get('/etudiant/discussions', [EtudiantController::class, 'discussions'])->name('etudiant.discussions');
+        Route::get('/etudiant/soutenance', [EtudiantController::class, 'maSoutenance'])->name('etudiant.soutenance');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
