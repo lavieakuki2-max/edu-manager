@@ -19,11 +19,11 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
         <>
             <Head title="EduManager - UNILUK" />
 
-            <div className="min-h-screen text-slate-900">
+            <div className="min-h-screen">
                 <div
                     className="fixed inset-0 -z-10"
                     style={{
-                        background: 'radial-gradient(circle at top left, rgba(20, 184, 166, 0.18), transparent 32%), radial-gradient(circle at top right, rgba(59, 130, 246, 0.14), transparent 28%), linear-gradient(180deg, #08111f 0%, #0f172a 38%, #f8fafc 38%, #f8fafc 100%)',
+                        background: 'linear-gradient(180deg, #08111f 0%, #0f172a 38%, #f8fafc 38%, #f8fafc 100%)',
                     }}
                 />
 
@@ -81,36 +81,36 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         {features.map((f) => {
                             const Icon = f.icon;
                             return (
-                                <div key={f.title} className="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
-                                    <div className="mb-4 inline-flex rounded-2xl bg-teal-400/15 p-3 text-teal-300">
+                                <div key={f.title} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                                    <div className="mb-4 inline-flex rounded-2xl bg-teal-50 p-3 text-teal-600">
                                         <Icon size={22} />
                                     </div>
-                                    <h3 className="text-base font-semibold text-white">{f.title}</h3>
-                                    <p className="mt-2 text-sm leading-6 text-slate-300/80">{f.desc}</p>
+                                    <h3 className="text-base font-semibold text-slate-900">{f.title}</h3>
+                                    <p className="mt-2 text-sm leading-6 text-slate-500">{f.desc}</p>
                                 </div>
                             );
                         })}
                     </section>
 
                     <section className="pb-20">
-                        <h2 className="text-center text-2xl font-bold text-white sm:text-3xl">Un espace pour chaque role</h2>
+                        <h2 className="text-center text-2xl font-bold text-slate-900 sm:text-3xl">Un espace pour chaque role</h2>
                         <div className="mt-10 grid gap-6 sm:grid-cols-3">
                             {roles.map((r) => {
                                 const Icon = r.icon;
                                 return (
-                                    <div key={r.label} className="rounded-3xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-sm">
+                                    <div key={r.label} className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
                                         <div className={`mx-auto mb-5 inline-flex rounded-2xl bg-gradient-to-br p-4 text-white shadow-lg ${r.color}`}>
                                             <Icon size={24} />
                                         </div>
-                                        <h3 className="text-lg font-semibold text-white">{r.label}</h3>
-                                        <p className="mt-3 text-sm leading-6 text-slate-300/80">{r.desc}</p>
+                                        <h3 className="text-lg font-semibold text-slate-900">{r.label}</h3>
+                                        <p className="mt-3 text-sm leading-6 text-slate-500">{r.desc}</p>
                                     </div>
                                 );
                             })}
                         </div>
                     </section>
 
-                    <footer className="border-t border-white/10 py-8 text-center text-sm text-slate-400">
+                    <footer className="border-t border-slate-200 py-8 text-center text-sm text-slate-500">
                         EduManager — Universite de Lukanga (UNILUK) — Laravel {laravelVersion} / PHP {phpVersion}
                     </footer>
                 </main>
