@@ -5,6 +5,7 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { Briefcase, GraduationCap, Shield } from 'lucide-react';
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -15,10 +16,18 @@ export default function Login({ status, canResetPassword }) {
 
     const submit = (e) => {
         e.preventDefault();
-
         post(route('login'), {
             onFinish: () => reset('password'),
         });
+    };
+
+    const quickLogin = (email, password) => {
+        setData({ email, password, remember: false });
+        setTimeout(() => {
+            post(route('login'), {
+                onFinish: () => reset('password'),
+            });
+        }, 50);
     };
 
     return (
@@ -93,6 +102,39 @@ export default function Login({ status, canResetPassword }) {
                     </Link>
                 </p>
             </form>
+
+            <div className="mt-8">
+                <div className="relative">
+                    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10" /></div>
+                    <div className="relative flex justify-center text-xs uppercase"><span className="bg-slate-900 px-3 text-slate-400">Accès rapide (démo)</span></div>
+                </div>
+                <div className="mt-4 grid grid-cols-3 gap-3">
+                    <button
+                        type="button"
+                        onClick={() => quickLogin('admin@uniluk.edu', 'password')}
+                        className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-4 text-white transition hover:bg-white/10 hover:border-amber-400/40"
+                    >
+                        <Shield size={20} className="text-amber-400" />
+                        <span className="text-xs font-medium">Admin</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => quickLogin('ngoy@uniluk.edu', 'password')}
+                        className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-4 text-white transition hover:bg-white/10 hover:border-cyan-400/40"
+                    >
+                        <GraduationCap size={20} className="text-cyan-400" />
+                        <span className="text-xs font-medium">Enseignant</span>
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => quickLogin('kabongo@uniluk.edu', 'password')}
+                        className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-4 text-white transition hover:bg-white/10 hover:border-teal-400/40"
+                    >
+                        <Briefcase size={20} className="text-teal-400" />
+                        <span className="text-xs font-medium">Étudiant</span>
+                    </button>
+                </div>
+            </div>
         </GuestLayout>
     );
 }
