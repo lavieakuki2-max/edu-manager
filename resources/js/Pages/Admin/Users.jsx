@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import UserAvatar from '@/Components/UserAvatar';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import {
@@ -199,9 +200,7 @@ export default function Users({ users = [], stats = {} }) {
                                     <div className="p-5">
                                         <div className="flex items-start justify-between">
                                             <div className="flex items-center gap-3">
-                                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-500 text-sm font-bold text-slate-950">
-                                                    {user.prenom?.charAt(0)}{user.nom?.charAt(0)}
-                                                </div>
+                                                <UserAvatar user={user} size="lg" />
                                                 <div className="min-w-0">
                                                     <p className="font-semibold text-slate-950 truncate">{user.prenom} {user.nom}</p>
                                                     <p className="text-sm text-slate-500 truncate">{user.email}</p>
@@ -292,9 +291,7 @@ export default function Users({ users = [], stats = {} }) {
                                         <tr key={user.id} className="transition hover:bg-slate-50">
                                             <td className="px-5 py-3">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-sm font-bold text-blue-600">
-                                                        {user.prenom?.charAt(0)}{user.nom?.charAt(0)}
-                                                    </div>
+                                                    <UserAvatar user={user} size="sm" />
                                                     <div>
                                                         <p className="font-medium text-slate-950">{user.prenom} {user.nom}</p>
                                                         <p className="text-xs text-slate-400">{user.email}</p>
@@ -493,9 +490,7 @@ export default function Users({ users = [], stats = {} }) {
 
                         <div className="space-y-4">
                             <div className="flex items-center gap-4">
-                                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-500 text-xl font-bold text-slate-950">
-                                    {showView.prenom?.charAt(0)}{showView.nom?.charAt(0)}
-                                </div>
+                                <UserAvatar user={showView} size="xl" />
                                 <div>
                                     <p className="text-lg font-semibold text-slate-950">{showView.prenom} {showView.nom}</p>
                                     <p className="text-sm text-slate-500">{showView.email}</p>

@@ -23,7 +23,10 @@ class User extends Authenticatable
         'role',
         'email',
         'password',
+        'photo_profil',
     ];
+
+    protected $appends = ['photo_url'];
 
     public function etudiant()
     {
@@ -48,6 +51,14 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    public function getPhotoUrlAttribute(): ?string
+    {
+        if ($this->photo_profil) {
+            return \Illuminate\Support\Facades\Storage::url($this->photo_profil);
+        }
+        return null;
     }
 
     public function unreadNotificationsCount(): int

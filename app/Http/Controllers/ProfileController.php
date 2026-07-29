@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -38,6 +41,48 @@ class ProfileController extends Controller
         $request->user()->save();
 
         return Redirect::route('profile.edit');
+    }
+
+    /**
+     * Update the user's profile photo.
+     */
+    public function updatePhoto(Request $request): JsonResponse
+    {
+        $request->validate([
+            'photo' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+        ]);
+
+        $user = $request->user();
+
+        if ($user->photo_profil) {
+            Storage::disk('public')->delete($user->photo_profil);
+        }
+
+        $path = $request->file('photo')->store('avatars', 'public');
+
+        $user->update(['photo_profil' => $path]);
+
+        return response()->json([
+            'success' => true,
+            'photo_url' => Storage::url($path),
+        ]);
+    }
+
+    /**
+     * Delete the user's profile photo.
+     */
+    public function deletePhoto(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if ($user->photo_profil) {
+            Storage::disk('public')->delete($user->photo_profil);
+            $user->update(['photo_profil' => null]);
+        }
+
+        return response()->json([
+            'success' => true,
+        ]);
     }
 
     /**

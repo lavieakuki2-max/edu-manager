@@ -9,13 +9,11 @@ export default function NavLink({
     return (
         <Link
             {...props}
-            className={
-                'flex items-center px-4 py-2 text-sm font-medium transition duration-150 ease-in-out focus:outline-none rounded-lg ' +
-                (active
-                    ? 'bg-indigo-50 text-indigo-700'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 focus:bg-gray-50 focus:text-gray-900') +
-                ' ' + className
-            }
+            className={`rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 focus:outline-none ${
+                active
+                    ? 'bg-white/15 text-white shadow-md'
+                    : 'text-slate-300 hover:bg-white/10 hover:text-white'
+            } ${className}`}
         >
             {children}
         </Link>

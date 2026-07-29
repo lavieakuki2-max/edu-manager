@@ -94,9 +94,24 @@ class ProjetController extends Controller
                 'theme_recherche' => $validated['theme_recherche'],
                 'mots_cles' => $validated['mots_cles'] ?? null,
             ]);
-        } elseif ($validated['type'] === 'Stage') {
+        } else        if ($validated['type'] === 'Stage') {
+            $entrepriseId = $validated['entreprise_id'] ?? null;
+
+            if (!$entrepriseId && !empty($validated['nouvelle_entreprise'])) {
+                $nouvelle = Entreprise::create([
+                    'raison_sociale' => $validated['nouvelle_entreprise'],
+                    'adresse' => $validated['nouvelle_entreprise_adresse'] ?? null,
+                    'telephone' => $validated['nouvelle_entreprise_telephone'] ?? null,
+                    'email' => $validated['nouvelle_entreprise_email'] ?? null,
+                    'maitre_stage' => $validated['nouvelle_entreprise_maitre_stage'] ?? null,
+                    'maitre_stage_telephone' => $validated['nouvelle_entreprise_maitre_stage_telephone'] ?? null,
+                    'maitre_stage_email' => $validated['nouvelle_entreprise_maitre_stage_email'] ?? null,
+                ]);
+                $entrepriseId = $nouvelle->id;
+            }
+
             $projet->stage()->create([
-                'entreprise_id' => $validated['entreprise_id'],
+                'entreprise_id' => $entrepriseId,
                 'date_debut' => $validated['date_debut'],
                 'date_fin' => $validated['date_fin'],
                 'objectifs_stage' => $validated['objectifs_stage'],

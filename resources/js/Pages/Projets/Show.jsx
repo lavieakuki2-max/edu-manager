@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import UserAvatar from '@/Components/UserAvatar';
 import { Head, Link, useForm } from '@inertiajs/react';
 import {
     ArrowLeft, BookOpen, Briefcase, CheckCircle2, Clock, Download, Eye, FileText, History, Send, Shield, UploadCloud,
@@ -233,10 +234,18 @@ export default function Show({ projet, canAdmin, canComment = false, canUpload =
                         <div className="space-y-6">
                             {projet.type === 'Stage' && projet.stage && (
                                 <div className="panel-card p-6">
-                                    <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Détails du stage</h3>
+                                    <h3 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Entreprise d'accueil</h3>
                                     <dl className="mt-3 space-y-2 text-sm">
-                                        <div className="flex justify-between"><dt className="text-slate-500">Entreprise</dt><dd className="font-medium text-slate-900">{projet.stage.entreprise?.raison_sociale || '—'}</dd></div>
-                                        <div className="flex justify-between"><dt className="text-slate-500">Maître de stage</dt><dd className="font-medium text-slate-900">{projet.stage.entreprise?.maitre_stage || '—'}</dd></div>
+                                        <div className="flex justify-between"><dt className="text-slate-500">Raison sociale</dt><dd className="font-medium text-slate-900">{projet.stage.entreprise?.raison_sociale || '—'}</dd></div>
+                                        <div className="flex justify-between"><dt className="text-slate-500">Secteur</dt><dd className="font-medium text-slate-900">{projet.stage.entreprise?.secteur || '—'}</dd></div>
+                                        <div className="flex justify-between"><dt className="text-slate-500">Adresse</dt><dd className="font-medium text-slate-900">{projet.stage.entreprise?.adresse || '—'}</dd></div>
+                                        <div className="flex justify-between"><dt className="text-slate-500">Téléphone</dt><dd className="font-medium text-slate-900">{projet.stage.entreprise?.telephone || '—'}</dd></div>
+                                        <div className="flex justify-between"><dt className="text-slate-500">Email</dt><dd className="font-medium text-slate-900">{projet.stage.entreprise?.email || '—'}</dd></div>
+                                        <div className="border-t border-slate-200 my-2" />
+                                        <div className="flex justify-between"><dt className="text-slate-500 font-semibold">Maître de stage</dt><dd className="font-medium text-slate-900">{projet.stage.entreprise?.maitre_stage || '—'}</dd></div>
+                                        <div className="flex justify-between"><dt className="text-slate-500">Tél. maître de stage</dt><dd className="font-medium text-slate-900">{projet.stage.entreprise?.maitre_stage_telephone || '—'}</dd></div>
+                                        <div className="flex justify-between"><dt className="text-slate-500">Email maître de stage</dt><dd className="font-medium text-slate-900">{projet.stage.entreprise?.maitre_stage_email || '—'}</dd></div>
+                                        <div className="border-t border-slate-200 my-2" />
                                         <div className="flex justify-between"><dt className="text-slate-500">Période</dt><dd className="font-medium text-slate-900">{projet.stage.date_debut} → {projet.stage.date_fin}</dd></div>
                                     </dl>
                                 </div>

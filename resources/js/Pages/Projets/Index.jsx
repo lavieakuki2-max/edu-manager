@@ -37,6 +37,14 @@ export default function Index({ projets, enseignants, entreprises, canCreate, ca
         theme_recherche: '',
         mots_cles: '',
         entreprise_id: '',
+        nouvelle_entreprise: '',
+        nouvelle_entreprise_adresse: '',
+        nouvelle_entreprise_secteur: '',
+        nouvelle_entreprise_telephone: '',
+        nouvelle_entreprise_email: '',
+        nouvelle_entreprise_maitre_stage: '',
+        nouvelle_entreprise_maitre_stage_telephone: '',
+        nouvelle_entreprise_maitre_stage_email: '',
         date_debut: '',
         date_fin: '',
         objectifs_stage: '',
@@ -251,14 +259,64 @@ export default function Index({ projets, enseignants, entreprises, canCreate, ca
                                 <>
                                     <div>
                                         <label className="mb-1.5 block text-sm font-semibold text-slate-700">Entreprise</label>
-                                        <select className="soft-input" value={createForm.data.entreprise_id} onChange={(e) => createForm.setData('entreprise_id', e.target.value)}>
+                                        <select className="soft-input" value={createForm.data.entreprise_id} onChange={(e) => {
+                                            createForm.setData('entreprise_id', e.target.value);
+                                            if (e.target.value !== '__nouvelle__') {
+                                                createForm.setData('nouvelle_entreprise', '');
+                                            }
+                                        }}>
                                             <option value="">Sélectionner une entreprise</option>
                                             {entreprises.map((ent) => (
                                                 <option key={ent.id} value={ent.id}>{ent.raison_sociale}</option>
                                             ))}
+                                            <option value="__nouvelle__">Autre / Saisir une nouvelle entreprise</option>
                                         </select>
                                         {createForm.errors.entreprise_id && <p className="mt-1 text-xs text-red-600">{createForm.errors.entreprise_id}</p>}
                                     </div>
+
+                                    {createForm.data.entreprise_id === '__nouvelle__' && (
+                                        <div className="rounded-2xl border border-teal-200 bg-teal-50/50 p-4 space-y-4">
+                                            <p className="text-sm font-semibold text-teal-700">Nouvelle entreprise</p>
+                                            <div>
+                                                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Raison sociale *</label>
+                                                <input className="soft-input" value={createForm.data.nouvelle_entreprise} onChange={(e) => createForm.setData('nouvelle_entreprise', e.target.value)} placeholder="Nom de l'entreprise" />
+                                                {createForm.errors.nouvelle_entreprise && <p className="mt-1 text-xs text-red-600">{createForm.errors.nouvelle_entreprise}</p>}
+                                            </div>
+                                            <div className="grid gap-4 sm:grid-cols-2">
+                                                <div>
+                                                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">Adresse</label>
+                                                    <input className="soft-input" value={createForm.data.nouvelle_entreprise_adresse} onChange={(e) => createForm.setData('nouvelle_entreprise_adresse', e.target.value)} placeholder="Adresse complète" />
+                                                </div>
+                                                <div>
+                                                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">Secteur</label>
+                                                    <input className="soft-input" value={createForm.data.nouvelle_entreprise_secteur} onChange={(e) => createForm.setData('nouvelle_entreprise_secteur', e.target.value)} placeholder="Secteur d'activité" />
+                                                </div>
+                                                <div>
+                                                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">Téléphone</label>
+                                                    <input className="soft-input" value={createForm.data.nouvelle_entreprise_telephone} onChange={(e) => createForm.setData('nouvelle_entreprise_telephone', e.target.value)} placeholder="+243..." />
+                                                </div>
+                                                <div>
+                                                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">Email</label>
+                                                    <input type="email" className="soft-input" value={createForm.data.nouvelle_entreprise_email} onChange={(e) => createForm.setData('nouvelle_entreprise_email', e.target.value)} placeholder="contact@entreprise.com" />
+                                                </div>
+                                            </div>
+                                            <div className="grid gap-4 sm:grid-cols-3">
+                                                <div>
+                                                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">Maître de stage</label>
+                                                    <input className="soft-input" value={createForm.data.nouvelle_entreprise_maitre_stage} onChange={(e) => createForm.setData('nouvelle_entreprise_maitre_stage', e.target.value)} placeholder="Nom complet" />
+                                                </div>
+                                                <div>
+                                                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">Tél. maître de stage</label>
+                                                    <input className="soft-input" value={createForm.data.nouvelle_entreprise_maitre_stage_telephone} onChange={(e) => createForm.setData('nouvelle_entreprise_maitre_stage_telephone', e.target.value)} placeholder="+243..." />
+                                                </div>
+                                                <div>
+                                                    <label className="mb-1.5 block text-sm font-semibold text-slate-700">Email maître de stage</label>
+                                                    <input type="email" className="soft-input" value={createForm.data.nouvelle_entreprise_maitre_stage_email} onChange={(e) => createForm.setData('nouvelle_entreprise_maitre_stage_email', e.target.value)} placeholder="maitre@entreprise.com" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     <div className="grid gap-4 sm:grid-cols-2">
                                         <div>
                                             <label className="mb-1.5 block text-sm font-semibold text-slate-700">Date début</label>

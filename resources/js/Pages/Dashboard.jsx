@@ -23,17 +23,17 @@ export default function Dashboard({ role, userName, stats, projets, documentsRec
     const greeting = `Bonjour, ${userName}`;
 
     const cards = [
-        { label: 'Projets', value: stats.projets, icon: BookOpen, tone: 'from-teal-500 to-emerald-500' },
-        { label: 'En cours', value: stats.en_cours, icon: Clock, tone: 'from-blue-500 to-indigo-500' },
-        { label: 'Valides', value: stats.valides, icon: CheckCircle2, tone: 'from-emerald-500 to-lime-500' },
-        { label: 'Soutenances', value: stats.soutenances, icon: CalendarRange, tone: 'from-amber-500 to-orange-500' },
+        { label: 'Projets', value: stats.projets, icon: BookOpen, bg: 'bg-blue-50', color: 'text-blue-600' },
+        { label: 'En cours', value: stats.en_cours, icon: Clock, bg: 'bg-indigo-50', color: 'text-indigo-600' },
+        { label: 'Valides', value: stats.valides, icon: CheckCircle2, bg: 'bg-emerald-50', color: 'text-emerald-600' },
+        { label: 'Soutenances', value: stats.soutenances, icon: CalendarRange, bg: 'bg-amber-50', color: 'text-amber-600' },
     ];
 
     if (role === 'admin') {
-        cards.push({ label: 'Utilisateurs', value: stats.utilisateurs, icon: Users, tone: 'from-violet-500 to-purple-500' });
+        cards.push({ label: 'Utilisateurs', value: stats.utilisateurs, icon: Users, bg: 'bg-violet-50', color: 'text-violet-600' });
     }
 
-    cards.push({ label: 'Documents', value: stats.documents, icon: FileText, tone: 'from-sky-500 to-blue-500' });
+    cards.push({ label: 'Documents', value: stats.documents, icon: FileText, bg: 'bg-sky-50', color: 'text-sky-600' });
 
     const progressPercent = stats.projets > 0 ? Math.round((stats.valides / stats.projets) * 100) : 0;
 
@@ -101,7 +101,7 @@ export default function Dashboard({ role, userName, stats, projets, documentsRec
                                         <p className="panel-title">{card.label}</p>
                                         <p className="mt-3 text-3xl font-semibold text-slate-950">{card.value ?? 0}</p>
                                     </div>
-                                    <div className={`rounded-2xl bg-gradient-to-br p-3 text-white shadow-lg ${card.tone}`}>
+                                    <div className={`rounded-xl ${card.bg} p-3 ${card.color}`}>
                                         <Icon size={22} />
                                     </div>
                                 </div>

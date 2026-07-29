@@ -40,6 +40,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/projets/{projet}/documents', [DocumentController::class, 'store'])->middleware('role:etudiant,enseignant')->name('documents.store');
     Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
 
+    Route::get('/entreprises/search', [EntrepriseController::class, 'search'])->name('entreprises.search');
+
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
@@ -58,6 +60,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/admin/utilisateurs/{user}', [UserController::class, 'destroy'])->name('admin.users.delete');
 
         Route::get('/admin/entreprises', [EntrepriseController::class, 'index'])->name('admin.entreprises.index');
+        Route::get('/admin/entreprises/export', [EntrepriseController::class, 'export'])->name('admin.entreprises.export');
+        Route::get('/admin/entreprises/{entreprise}', [EntrepriseController::class, 'show'])->name('admin.entreprises.show');
         Route::post('/admin/entreprises', [EntrepriseController::class, 'store'])->name('admin.entreprises.store');
         Route::patch('/admin/entreprises/{entreprise}', [EntrepriseController::class, 'update'])->name('admin.entreprises.update');
         Route::delete('/admin/entreprises/{entreprise}', [EntrepriseController::class, 'destroy'])->name('admin.entreprises.delete');
@@ -69,11 +73,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('/admin/rapports', [RapportController::class, 'index'])->name('admin.rapports');
         Route::get('/admin/rapports/statistique', [RapportController::class, 'rapportStatistique'])->name('admin.pdf.statistique');
+        Route::get('/admin/rapports/statistique/word', [RapportController::class, 'rapportStatistiqueWord'])->name('admin.pdf.statistique.word');
         Route::get('/admin/rapports/etudiants-valides', [RapportController::class, 'listeEtudiantsValides'])->name('admin.pdf.etudiants-valides');
+        Route::get('/admin/rapports/etudiants-valides/word', [RapportController::class, 'listeEtudiantsValidesWord'])->name('admin.pdf.etudiants-valides.word');
         Route::get('/admin/rapports/lettres-recommandation', [RapportController::class, 'lettresRecommandation'])->name('admin.pdf.lettres-recommandation');
+        Route::get('/admin/rapports/lettres-recommandation/word', [RapportController::class, 'lettresRecommandationWord'])->name('admin.pdf.lettres-recommandation.word');
         Route::get('/admin/rapports/grille-cotation/{projet}', [RapportController::class, 'grilleCotation'])->name('admin.pdf.grille-cotation');
         Route::get('/admin/rapports/repartition-enseignants', [RapportController::class, 'repartitionEnseignants'])->name('admin.pdf.repartition-enseignants');
+        Route::get('/admin/rapports/repartition-enseignants/word', [RapportController::class, 'repartitionEnseignantsWord'])->name('admin.pdf.repartition-enseignants.word');
         Route::get('/admin/rapports/annuaire-entreprises', [RapportController::class, 'annuaireEntreprises'])->name('admin.pdf.annuaire-entreprises');
+        Route::get('/admin/rapports/annuaire-entreprises/word', [RapportController::class, 'annuaireEntreprisesWord'])->name('admin.pdf.annuaire-entreprises.word');
+        Route::get('/admin/rapports/attestation/{projet}', [RapportController::class, 'attestationValidation'])->name('admin.pdf.attestation');
+        Route::get('/admin/rapports/pv-soutenance/{projet}', [RapportController::class, 'pvSoutenance'])->name('admin.pdf.pv-soutenance');
     });
 
     Route::middleware('role:enseignant')->group(function () {
@@ -90,6 +101,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
+    Route::delete('/profile/photo', [ProfileController::class, 'deletePhoto'])->name('profile.photo.destroy');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
