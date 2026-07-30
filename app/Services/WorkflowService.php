@@ -68,6 +68,10 @@ class WorkflowService
 
         $projet->update(['statut_actuel' => $targetStatus]);
 
+        if ($targetStatus === 'Validé' && $projet->stage) {
+            $projet->stage()->update(['statut_validation' => 'valide']);
+        }
+
         $projet->historique()->create([
             'ancien_statut' => $ancienStatut,
             'nouveau_statut' => $targetStatus,

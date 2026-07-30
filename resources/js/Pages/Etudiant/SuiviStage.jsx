@@ -8,7 +8,13 @@ import {
 import { useState, useEffect, useMemo } from 'react';
 
 function getStatutLabel(statut) {
-    const labels = { en_attente: 'En attente', en_cours: 'En cours', termine: 'Terminé' };
+    const labels = {
+        en_attente: 'En attente',
+        en_cours: 'En stage (Actif)',
+        termine: 'Stage achevé',
+        non_approuve: 'Non approuvé',
+        approuve_attente: 'Approuvé (En attente)',
+    };
     return labels[statut] || statut;
 }
 
@@ -17,6 +23,8 @@ function getStatutColor(statut) {
         en_attente: 'bg-amber-50 text-amber-700 border border-amber-200',
         en_cours: 'bg-blue-50 text-blue-700 border border-blue-200',
         termine: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+        non_approuve: 'bg-red-50 text-red-700 border border-red-200',
+        approuve_attente: 'bg-amber-50 text-amber-700 border border-amber-200',
     };
     return colors[statut] || 'bg-slate-100 text-slate-600';
 }
@@ -47,19 +55,19 @@ function Chronometer({ stage }) {
             <div className="rounded-2xl border border-slate-200 bg-white p-5 text-center">
                 <Clock size={24} className="mx-auto text-blue-500 mb-2" />
                 <p className="text-3xl font-bold text-slate-950">
-                    {stage.statut_calcule === 'en_attente' ? daysUntilStart : elapsedDays}
+                    {stage.statut_courant === 'approuve_attente' ? daysUntilStart : elapsedDays}
                 </p>
                 <p className="text-xs text-slate-500 mt-1">
-                    {stage.statut_calcule === 'en_attente' ? 'jours avant début' : 'jours écoulés'}
+                    {stage.statut_courant === 'approuve_attente' ? 'jours avant début' : 'jours écoulés'}
                 </p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-5 text-center">
                 <Hourglass size={24} className="mx-auto text-amber-500 mb-2" />
                 <p className="text-3xl font-bold text-slate-950">
-                    {stage.statut_calcule === 'termine' ? 0 : remainingDays}
+                    {stage.statut_courant === 'termine' ? 0 : remainingDays}
                 </p>
                 <p className="text-xs text-slate-500 mt-1">
-                    {stage.statut_calcule === 'termine' ? 'Terminé' : 'jours restants'}
+                    {stage.statut_courant === 'termine' ? 'Terminé' : 'jours restants'}
                 </p>
             </div>
             <div className="rounded-2xl border border-slate-200 bg-white p-5 text-center">
@@ -184,8 +192,8 @@ export default function SuiviStage({ projet = null, stage = null }) {
                             </p>
                         </div>
                         {stage && (
-                            <span className={`status-pill text-xs ${getStatutColor(stage.statut_calcule)}`}>
-                                {getStatutLabel(stage.statut_calcule)}
+                            <span className={`status-pill text-xs ${getStatutColor(stage.statut_courant)}`}>
+                                {getStatutLabel(stage.statut_courant)}
                             </span>
                         )}
                     </div>
@@ -202,13 +210,37 @@ export default function SuiviStage({ projet = null, stage = null }) {
                             <Briefcase size={16} /> Mon Projet
                         </Link>
                     </div>
+                ) : stage.statut_courant === 'non_approuve' ? (
+                    <div className="panel-card p-16 text-center">
+                        <AlertCircle className="mx-auto text-red-300" size={48} />
+                        <h3 className="mt-4 text-lg font-semibold text-slate-700">Stage non approuvé</h3>
+                        <p className="mt-2 max-w-sm mx-auto text-sm text-slate-500">
+                            Votre stage est enregistré mais n&rsquo;a pas encore été approuvé par l&rsquo;administration.
+                            Veuillez patienter jusqu&rsquo;à la validation de votre projet.
+                        </p>
+                    </div>
                 ) : (
                     <>
-                        <div className="grid gap-6 lg:grid-cols-3">
-                            <div className="lg:col-span-2 space-y-6">
-                                <Chronometer stage={stage} />
-                                <ProgressBar stage={stage} />
+                        {stage.statut_courant === 'approuve_attente' ? (
+                            <div className="grid gap-4 sm:grid-cols-3">
+                                <div className="rounded-2xl border border-slate-200 bg-white p-5 text-center col-span-full">
+                                    <Calendar size={32} className="mx-auto text-amber-500 mb-3" />
+                                    <p className="text-lg font-semibold text-slate-700">Stage approuvé — En attente de démarrage</p>
+                                    <p className="mt-2 text-sm text-slate-500">
+                                        Début prévu le <strong>{new Date(stage.date_debut).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</strong>
+                                    </p>
+                                    <p className="mt-1 text-sm text-slate-500">
+                                        Fin prévue le <strong>{new Date(stage.date_fin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}</strong>
+                                        &nbsp;({stage.duree_jours} jours)
+                                    </p>
+                                </div>
                             </div>
+                        ) : (
+                            <div className="grid gap-6 lg:grid-cols-3">
+                                <div className="lg:col-span-2 space-y-6">
+                                    <Chronometer stage={stage} />
+                                    <ProgressBar stage={stage} />
+                                </div>
                             <div className="space-y-4">
                                 <div className="panel-card p-5">
                                     <h3 className="text-sm font-semibold text-slate-700 mb-4 flex items-center gap-2">
@@ -268,18 +300,27 @@ export default function SuiviStage({ projet = null, stage = null }) {
                                 </div>
                             </div>
                         </div>
+                        )}
 
                         <div className="panel-card p-5">
                             <div className="flex items-center justify-between mb-5">
                                 <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
                                     <FileText size={16} className="text-slate-400" /> Journal de bord hebdomadaire
                                 </h3>
-                                {stage.statut_calcule !== 'termine' && (
+                                {stage.statut_courant === 'en_cours' && (
                                     <button
                                         onClick={() => { setEditingEntry(null); reset(); setData('semaine_numero', nextSemaine); setShowForm(!showForm); }}
                                         className="soft-button-primary inline-flex items-center gap-1.5 text-xs"
                                     >
                                         <Plus size={14} /> Ajouter un rapport
+                                    </button>
+                                )}
+                                {stage.statut_courant === 'termine' && (
+                                    <button
+                                        onClick={() => { setEditingEntry(null); reset(); setData('semaine_numero', nextSemaine); setShowForm(!showForm); }}
+                                        className="soft-button bg-emerald-600 text-white hover:bg-emerald-700 inline-flex items-center gap-1.5 text-xs"
+                                    >
+                                        <FileText size={14} /> Déposer le rapport final
                                     </button>
                                 )}
                             </div>

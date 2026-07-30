@@ -8,6 +8,7 @@ use App\Models\ProjetAcademique;
 use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
@@ -38,35 +39,45 @@ class DocumentController extends Controller
 
     public function store(StoreDocumentRequest $request, ProjetAcademique $projet): RedirectResponse
     {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        $version = ((int) $projet->documents()->max('version')) + 1;
-        $path = $validated['fichier']->store("projets/{$projet->id}/documents", 'public');
+            $version = ((int) $projet->documents()->max('version')) + 1;
+            $path = $validated['fichier']->store("projets/{$projet->id}/documents", 'public');
 
-        $doc = $projet->documents()->create([
-            'user_id' => $request->user()->id,
-            'titre_fichier' => $validated['fichier']->getClientOriginalName(),
-            'chemin_stockage' => $path,
-            'version' => $version,
-            'date_depot' => now(),
-        ]);
+            $doc = $projet->documents()->create([
+                'user_id' => $request->user()->id,
+                'titre_fichier' => $validated['fichier']->getClientOriginalName(),
+                'chemin_stockage' => $path,
+                'version' => $version,
+                'date_depot' => now(),
+            ]);
 
-        NotificationService::notifierDocumentDepose($projet, $request->user(), $doc->titre_fichier);
+            NotificationService::notifierDocumentDepose($projet, $request->user(), $doc->titre_fichier);
 
-        return back()->with('success', "Document PDF depose en version {$version}.");
+            return back()->with('success', "Document PDF depose en version {$version}.");
+        } catch (\Exception $e) {
+            Log::error('Erreur dépôt document: ' . $e->getMessage());
+            return back()->with('error', 'Erreur lors du dépôt du document.');
+        }
     }
 
     public function download(Document $document)
     {
-        $this->authorize('view', $document);
+        try {
+            $this->authorize('view', $document);
 
-        if (!Storage::disk('public')->exists($document->chemin_stockage)) {
-            return back()->with('error', 'Le fichier n\'existe plus sur le serveur.');
+            if (!Storage::disk('public')->exists($document->chemin_stockage)) {
+                return back()->with('error', 'Le fichier n\'existe plus sur le serveur.');
+            }
+
+            return Storage::disk('public')->download($document->chemin_stockage, $document->titre_fichier, [
+                'Content-Disposition' => 'attachment; filename="' . $document->titre_fichier . '"',
+                'Content-Type' => 'application/octet-stream',
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Erreur téléchargement document: ' . $e->getMessage());
+            return back()->with('error', 'Erreur lors du téléchargement du document.');
         }
-
-        return Storage::disk('public')->download($document->chemin_stockage, $document->titre_fichier, [
-            'Content-Disposition' => 'attachment; filename="' . $document->titre_fichier . '"',
-            'Content-Type' => 'application/octet-stream',
-        ]);
     }
 }

@@ -7,9 +7,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class Stage extends Model
 {
-    protected $fillable = ['projet_id', 'entreprise_id', 'date_debut', 'date_fin', 'objectifs_stage', 'note_finale', 'statut'];
+    protected $fillable = ['projet_id', 'entreprise_id', 'date_debut', 'date_fin', 'duree_jours', 'objectifs_stage', 'note_finale', 'statut', 'statut_validation'];
 
-    protected $appends = ['duree_jours', 'jours_ecoules', 'progression', 'statut_calcule'];
+    protected $appends = ['duree_jours', 'jours_ecoules', 'progression', 'statut_calcule', 'statut_courant'];
+
+    protected static function booted(): void
+    {
+        static::saving(function (self $stage) {
+            if ($stage->date_debut && $stage->date_fin) {
+                $stage->duree_jours = Carbon::parse($stage->date_debut)
+                    ->diffInDays(Carbon::parse($stage->date_fin)) + 1;
+            }
+        });
+    }
 
     public function projet()
     {
@@ -29,6 +39,9 @@ class Stage extends Model
     public function getDureeJoursAttribute(): int
     {
         if (!$this->date_debut || !$this->date_fin) return 0;
+        if ($this->attributes['duree_jours'] ?? false) {
+            return (int) $this->attributes['duree_jours'];
+        }
         return Carbon::parse($this->date_debut)->diffInDays(Carbon::parse($this->date_fin)) + 1;
     }
 
@@ -59,6 +72,20 @@ class Stage extends Model
 
         if ($now < $debut) return 'en_attente';
         if ($fin && $now > $fin) return 'termine';
+        return 'en_cours';
+    }
+
+    public function getStatutCourantAttribute(): string
+    {
+        if (!$this->date_debut || !$this->date_fin || $this->statut_validation !== 'valide') {
+            return 'non_approuve';
+        }
+        $now = Carbon::now()->startOfDay();
+        $debut = Carbon::parse($this->date_debut);
+        $fin = Carbon::parse($this->date_fin);
+
+        if ($now < $debut) return 'approuve_attente';
+        if ($now > $fin) return 'termine';
         return 'en_cours';
     }
 }

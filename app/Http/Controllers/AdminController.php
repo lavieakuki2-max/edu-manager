@@ -11,82 +11,108 @@ use App\Services\WorkflowService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AdminController extends Controller
 {
     public function assigner(AssignEnseignantRequest $request, ProjetAcademique $projet): RedirectResponse
     {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        $projet->update(['enseignant_id' => $validated['enseignant_id']]);
+            $projet->update(['enseignant_id' => $validated['enseignant_id']]);
 
-        $workflow = app(WorkflowService::class);
-        if ($workflow->canTransition($projet, 'En Cours', $request->user())) {
-            $workflow->transition($projet, 'En Cours', 'Encadreur assigné');
+            $workflow = app(WorkflowService::class);
+            if ($workflow->canTransition($projet, 'En Cours', $request->user())) {
+                $workflow->transition($projet, 'En Cours', 'Encadreur assigné');
+            }
+
+            NotificationService::notifierAttributionEnseignant($projet);
+
+            return back()->with('success', 'Encadreur assigné.');
+        } catch (\Exception $e) {
+            Log::error('Erreur assignation encadreur: ' . $e->getMessage());
+            return back()->with('error', 'Erreur lors de l\'assignation de l\'encadreur.');
         }
-
-        NotificationService::notifierAttributionEnseignant($projet);
-
-        return back()->with('success', 'Encadreur assigné.');
     }
 
     public function planifierSoutenance(PlanifierSoutenanceRequest $request, ProjetAcademique $projet): RedirectResponse
     {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        Soutenance::updateOrCreate(['projet_id' => $projet->id], $validated);
+            Soutenance::updateOrCreate(['projet_id' => $projet->id], $validated);
 
-        $workflow = app(WorkflowService::class);
-        if ($workflow->canTransition($projet, 'Prêt pour Soutenance', $request->user())) {
-            $workflow->transition($projet, 'Prêt pour Soutenance', 'Soutenance planifiée');
+            $workflow = app(WorkflowService::class);
+            if ($workflow->canTransition($projet, 'Prêt pour Soutenance', $request->user())) {
+                $workflow->transition($projet, 'Prêt pour Soutenance', 'Soutenance planifiée');
+            }
+
+            return back()->with('success', 'Soutenance planifiée.');
+        } catch (\Exception $e) {
+            Log::error('Erreur planification soutenance: ' . $e->getMessage());
+            return back()->with('error', 'Erreur lors de la planification de la soutenance.');
         }
-
-        return back()->with('success', 'Soutenance planifiée.');
     }
 
     public function lettreStage(ProjetAcademique $projet)
     {
-        $this->authorize('assign', ProjetAcademique::class);
+        try {
+            $this->authorize('assign', ProjetAcademique::class);
 
-        $projet->load('etudiant.user', 'stage.entreprise', 'enseignant.user');
+            $projet->load('etudiant.user', 'stage.entreprise', 'enseignant.user');
 
-        return Pdf::loadView('pdf.lettre-stage', compact('projet'))
-            ->download('lettre-stage-'.$projet->id.'.pdf');
+            return Pdf::loadView('pdf.lettre-stage-v2', compact('projet'))
+                ->download('lettre-stage-'.$projet->id.'.pdf');
+        } catch (\Exception $e) {
+            Log::error('Erreur génération lettre stage: ' . $e->getMessage());
+            return back()->with('error', 'Erreur lors de la génération de la lettre de stage.');
+        }
     }
 
     public function ficheCotation(ProjetAcademique $projet)
     {
-        $this->authorize('assign', ProjetAcademique::class);
+        try {
+            $this->authorize('assign', ProjetAcademique::class);
 
-        $projet->load('etudiant.user', 'enseignant.user', 'soutenance');
+            $projet->load('etudiant.user', 'enseignant.user', 'soutenance');
 
-        return Pdf::loadView('pdf.fiche-cotation', compact('projet'))
-            ->download('fiche-cotation-'.$projet->id.'.pdf');
+            return Pdf::loadView('pdf.fiche-cotation', compact('projet'))
+                ->download('fiche-cotation-'.$projet->id.'.pdf');
+        } catch (\Exception $e) {
+            Log::error('Erreur génération fiche cotation: ' . $e->getMessage());
+            return back()->with('error', 'Erreur lors de la génération de la fiche de cotation.');
+        }
     }
 
     public function rapportGlobal(Request $request)
     {
-        $this->authorize('assign', ProjetAcademique::class);
+        try {
+            $this->authorize('assign', ProjetAcademique::class);
 
-        $annee = $request->query('annee', '2025-2026');
+            $annee = $request->query('annee', '2025-2026');
 
-        $projets = ProjetAcademique::with(['etudiant.user', 'enseignant.user', 'soutenance'])
-            ->where('annee_academique', $annee)
-            ->latest()
-            ->get();
+            $projets = ProjetAcademique::with(['etudiant.user', 'enseignant.user', 'soutenance'])
+                ->where('annee_academique', $annee)
+                ->latest()
+                ->get();
 
-        $stats = [
-            'total' => $projets->count(),
-            'soumis' => $projets->where('statut_actuel', 'Sujet Soumis')->count(),
-            'en_cours' => $projets->where('statut_actuel', 'En Cours')->count(),
-            'soutenances' => $projets->where('statut_actuel', 'Prêt pour Soutenance')->count(),
-            'valides' => $projets->where('statut_actuel', 'Validé')->count(),
-            'a_corriger' => $projets->where('statut_actuel', 'À Corriger')->count(),
-            'total_stages' => $projets->where('type', 'Stage')->count(),
-            'total_memoires' => $projets->where('type', 'Memoire')->count(),
-        ];
+            $stats = [
+                'total' => $projets->count(),
+                'soumis' => $projets->where('statut_actuel', 'Sujet Soumis')->count(),
+                'en_cours' => $projets->where('statut_actuel', 'En Cours')->count(),
+                'soutenances' => $projets->where('statut_actuel', 'Prêt pour Soutenance')->count(),
+                'valides' => $projets->where('statut_actuel', 'Validé')->count(),
+                'a_corriger' => $projets->where('statut_actuel', 'À Corriger')->count(),
+                'total_stages' => $projets->where('type', 'Stage')->count(),
+                'total_memoires' => $projets->where('type', 'Memoire')->count(),
+            ];
 
-        return Pdf::loadView('pdf.rapport-global', compact('projets', 'stats', 'annee'))
-            ->download('rapport-global-'.$annee.'.pdf');
+            return Pdf::loadView('pdf.rapport-global', compact('projets', 'stats', 'annee'))
+                ->download('rapport-global-'.$annee.'.pdf');
+        } catch (\Exception $e) {
+            Log::error('Erreur génération rapport global: ' . $e->getMessage());
+            return back()->with('error', 'Erreur lors de la génération du rapport global.');
+        }
     }
 }

@@ -48,24 +48,31 @@ class ProfileController extends Controller
      */
     public function updatePhoto(Request $request): JsonResponse
     {
-        $request->validate([
-            'photo' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
-        ]);
+        try {
+            $request->validate([
+                'photo' => ['required', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            ]);
 
-        $user = $request->user();
+            $user = $request->user();
 
-        if ($user->photo_profil) {
-            Storage::disk('public')->delete($user->photo_profil);
+            if ($user->photo_profil) {
+                Storage::disk('public')->delete($user->photo_profil);
+            }
+
+            $path = $request->file('photo')->store('avatars', 'public');
+
+            $user->update(['photo_profil' => $path]);
+
+            return response()->json([
+                'success' => true,
+                'photo_url' => Storage::url($path),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Erreur lors du téléchargement de la photo.',
+            ], 500);
         }
-
-        $path = $request->file('photo')->store('avatars', 'public');
-
-        $user->update(['photo_profil' => $path]);
-
-        return response()->json([
-            'success' => true,
-            'photo_url' => Storage::url($path),
-        ]);
     }
 
     /**
@@ -73,16 +80,23 @@ class ProfileController extends Controller
      */
     public function deletePhoto(Request $request): JsonResponse
     {
-        $user = $request->user();
+        try {
+            $user = $request->user();
 
-        if ($user->photo_profil) {
-            Storage::disk('public')->delete($user->photo_profil);
-            $user->update(['photo_profil' => null]);
+            if ($user->photo_profil) {
+                Storage::disk('public')->delete($user->photo_profil);
+                $user->update(['photo_profil' => null]);
+            }
+
+            return response()->json([
+                'success' => true,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Erreur lors de la suppression de la photo.',
+            ], 500);
         }
-
-        return response()->json([
-            'success' => true,
-        ]);
     }
 
     /**

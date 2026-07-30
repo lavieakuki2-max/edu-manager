@@ -283,8 +283,12 @@ class RapportController extends Controller
 
         $html = '<p>Total : <strong>' . $projets->count() . '</strong> lettre(s) de recommandation</p>';
         foreach ($projets as $p) {
+            $debut = $p->stage?->date_debut ? \Carbon\Carbon::parse($p->stage->date_debut)->format('d/m/Y') : '—';
+            $fin = $p->stage?->date_fin ? \Carbon\Carbon::parse($p->stage->date_fin)->format('d/m/Y') : '—';
+            $duree = $p->stage?->duree_jours ?? '—';
             $html .= '<hr><p><strong>' . e($p->etudiant?->user?->prenom ?? '') . ' ' . e($p->etudiant?->user?->nom ?? '') . '</strong> — ' . e($p->titre) . '</p>';
             $html .= '<p>Entreprise : ' . e($p->stage?->entreprise?->raison_sociale ?? '—') . '</p>';
+            $html .= '<p>Periode : du ' . $debut . ' au ' . $fin . ' (' . $duree . ' jours)</p>';
         }
 
         return DocumentExportService::generateWord(

@@ -7,7 +7,13 @@ import {
 } from 'lucide-react';
 
 function statutLabel(statut) {
-    const map = { en_attente: 'En attente', en_cours: 'En cours', termine: 'Terminé' };
+    const map = {
+        en_attente: 'En attente',
+        en_cours: 'En stage (Actif)',
+        termine: 'Stage achevé',
+        non_approuve: 'Non approuvé',
+        approuve_attente: 'Approuvé (En attente)',
+    };
     return map[statut] || statut;
 }
 
@@ -16,6 +22,8 @@ function statutColor(statut) {
         en_attente: 'bg-amber-50 text-amber-700 border border-amber-200',
         en_cours: 'bg-blue-50 text-blue-700 border border-blue-200',
         termine: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+        non_approuve: 'bg-red-50 text-red-700 border border-red-200',
+        approuve_attente: 'bg-amber-50 text-amber-700 border border-amber-200',
     };
     return map[statut] || 'bg-slate-100 text-slate-600';
 }
@@ -34,8 +42,8 @@ export default function StageDetail({ stage }) {
                     <Link href={route('admin.stages.index')} className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 transition-colors">
                         <ArrowLeft size={16} /> Retour
                     </Link>
-                    <span className={`status-pill text-xs ${statutColor(stage.statut_calcule)}`}>
-                        {statutLabel(stage.statut_calcule)}
+                    <span className={`status-pill text-xs ${statutColor(stage.statut_courant)}`}>
+                        {statutLabel(stage.statut_courant)}
                     </span>
                 </div>
 
