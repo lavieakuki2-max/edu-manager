@@ -25,14 +25,14 @@ export default function Register() {
         post(route('register'), { onFinish: () => reset('password', 'password_confirmation') });
     };
 
-    const inputClass = "mt-1 block w-full rounded-xl border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder-slate-400 shadow-sm outline-none transition focus:border-teal-400 focus:bg-white/15 focus:ring-4 focus:ring-teal-400/20";
+    const inputClass = "mt-1 block w-full rounded-xl border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder-slate-400 shadow-sm outline-none transition focus:border-blue-400 focus:bg-white/15 focus:ring-4 focus:ring-blue-400/20";
     const labelClass = "block text-sm font-medium text-slate-300";
 
     return (
         <GuestLayout>
             <Head title="Inscription" />
             <div className="mb-6">
-                <p className="text-sm font-semibold uppercase tracking-[.18em] text-teal-400">Nouveau compte</p>
+                <p className="text-sm font-semibold uppercase tracking-[.18em] text-blue-400">Nouveau compte</p>
                 <h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Créez votre espace</h1>
                 <p className="mt-2 text-sm text-slate-300">Rejoignez la plateforme UNILUK.</p>
             </div>
@@ -71,7 +71,7 @@ export default function Register() {
 
                 <div>
                     <InputLabel htmlFor="role" value="Je suis" className={labelClass} />
-                    <select id="role" value={data.role} onChange={(e) => setData('role', e.target.value)} className="mt-1 block w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white shadow-sm outline-none transition focus:border-teal-400 focus:ring-4 focus:ring-teal-400/20">
+                    <select id="role" value={data.role} onChange={(e) => setData('role', e.target.value)} className="mt-1 block w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white shadow-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-400/20">
                         <option value="etudiant" className="text-slate-900">Étudiant</option>
                         <option value="enseignant" className="text-slate-900">Enseignant</option>
                     </select>
@@ -116,8 +116,8 @@ export default function Register() {
                 )}
 
                 <div className="flex items-center justify-between pt-2">
-                    <Link href={route('login')} className="text-sm text-teal-400 hover:text-teal-300 transition">Déjà inscrit ?</Link>
-                    <PrimaryButton className="rounded-xl bg-teal-600 px-6 py-3 text-sm font-semibold text-white hover:bg-teal-500 transition shadow-lg shadow-teal-600/25" disabled={processing}>
+                    <Link href={route('login')} className="text-sm text-blue-400 hover:text-blue-300 transition">Déjà inscrit ?</Link>
+                    <PrimaryButton className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:from-blue-700 hover:to-indigo-700 transition shadow-lg shadow-blue-600/25" disabled={processing}>
                         Créer le compte
                     </PrimaryButton>
                 </div>

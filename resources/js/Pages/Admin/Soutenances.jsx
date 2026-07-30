@@ -293,7 +293,7 @@ export default function Soutenances({ soutenances = [], projetsPrets = [], ensei
                                                 <td className="px-5 py-3">
                                                     {soutenance.note_finale != null ? (
                                                         <div className="flex flex-col gap-0.5">
-                                                            <span className="status-pill bg-teal-50 text-teal-700 border border-teal-200 text-xs">
+                                                            <span className="status-pill bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs">
                                                                 <Award size={12} />
                                                                 {soutenance.note_finale}/20
                                                             </span>
@@ -398,7 +398,7 @@ export default function Soutenances({ soutenances = [], projetsPrets = [], ensei
                                                 <td className="px-5 py-3">{renderJuryCell(soutenance)}</td>
                                                 <td className="px-5 py-3">
                                                     {soutenance.note_finale != null ? (
-                                                        <span className="status-pill bg-teal-50 text-teal-700 border border-teal-200 text-xs">
+                                                        <span className="status-pill bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs">
                                                             <Award size={12} />
                                                             {soutenance.note_finale}/20
                                                         </span>
@@ -759,10 +759,10 @@ export default function Soutenances({ soutenances = [], projetsPrets = [], ensei
                                     </div>
                                 )}
                                 <div className="flex items-center gap-3 text-sm">
-                                    <Award size={16} className={showView.note_finale != null ? 'text-teal-500' : 'text-slate-400'} />
+                                    <Award size={16} className={showView.note_finale != null ? 'text-emerald-500' : 'text-slate-400'} />
                                     <span className="text-slate-600">
                                         Note: {showView.note_finale != null ? `${showView.note_finale}/20` : 'Non noté'}
-                                        {showView.mention && <span className="ml-2 text-teal-600">({showView.mention})</span>}
+                                        {showView.mention && <span className="ml-2 text-emerald-600">({showView.mention})</span>}
                                     </span>
                                 </div>
                                 {showView.remarques && (

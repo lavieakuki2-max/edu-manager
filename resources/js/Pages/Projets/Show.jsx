@@ -199,7 +199,7 @@ export default function Show({ projet, canAdmin, canComment = false, canUpload =
                     <div className="mt-6 grid gap-1.5 sm:grid-cols-4">
                         {steps.map((step, idx) => (
                             <div key={step} className={`rounded-xl px-3 py-2.5 text-center text-xs font-semibold transition ${
-                                idx <= activeIdx ? 'bg-teal-400/20 text-teal-300' : 'bg-white/5 text-white/30'
+                                idx <= activeIdx ? 'bg-blue-400/20 text-blue-300' : 'bg-white/5 text-white/30'
                             }`}>
                                 {idx <= activeIdx && <CheckCircle2 size={12} className="mx-auto mb-1" />}
                                 {step}
@@ -309,7 +309,7 @@ export default function Show({ projet, canAdmin, canComment = false, canUpload =
                 {activeTab === 'documents' && (
                     <div className="space-y-4">
                         {canUpload && !isSupervision && (
-                            <div className="panel-card border-dashed border-teal-200 p-6">
+                            <div className="panel-card border-dashed border-blue-200 p-6">
                                 <div className="mb-4 flex items-center justify-between">
                                     <div>
                                         <h3 className="text-base font-semibold text-slate-950">Dépôt de document</h3>

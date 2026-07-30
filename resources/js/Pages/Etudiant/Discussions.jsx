@@ -25,13 +25,12 @@ export default function Discussions({ commentaires = [], projets = [] }) {
     const [activeProjet, setActiveProjet] = useState(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        projet_id: '',
         contenu: '',
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e, projetId) => {
         e.preventDefault();
-        post(route('etudiant.commentaires.store'), {
+        post(route('projets.commentaires.store', projetId), {
             onSuccess: () => {
                 reset('contenu');
             },
@@ -40,7 +39,6 @@ export default function Discussions({ commentaires = [], projets = [] }) {
 
     const handleProjetSelect = (projetId) => {
         setActiveProjet(projetId);
-        setData('projet_id', projetId);
     };
 
     const projetsWithComments = projets.map((p) => ({
@@ -106,7 +104,7 @@ export default function Discussions({ commentaires = [], projets = [] }) {
                                                     <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-bold ${
                                                         commentaire.auteur?.role === 'enseignant'
                                                             ? 'bg-blue-50 text-blue-600'
-                                                            : 'bg-gradient-to-br from-teal-400 to-cyan-500 text-slate-950'
+                                                            : 'bg-gradient-to-br from-blue-400 to-indigo-500 text-white'
                                                     }`}>
                                                         {commentaire.auteur?.prenom?.charAt(0)}{commentaire.auteur?.nom?.charAt(0)}
                                                     </div>
@@ -142,8 +140,7 @@ export default function Discussions({ commentaires = [], projets = [] }) {
                                     </div>
 
                                     <div className="border-t border-slate-200/80 p-5 bg-slate-50/50">
-                                        <form onSubmit={handleSubmit} className="flex gap-3">
-                                            <input type="hidden" value={projet.id} />
+                                        <form onSubmit={(e) => handleSubmit(e, projet.id)} className="flex gap-3">
                                             <textarea
                                                 className="soft-input flex-1 resize-none"
                                                 rows={2}
@@ -151,14 +148,14 @@ export default function Discussions({ commentaires = [], projets = [] }) {
                                                 value={activeProjet === projet.id ? data.contenu : ''}
                                                 onChange={(e) => {
                                                     if (activeProjet === projet.id) {
-                                                        setData({ projet_id: projet.id, contenu: e.target.value });
+                                                        setData('contenu', e.target.value);
                                                     }
                                                 }}
                                             />
                                             <button
                                                 type="submit"
                                                 disabled={processing || !data.contenu.trim()}
-                                                className="soft-button soft-button-primary self-end disabled:opacity-50"
+                                                className="soft-button-primary self-end disabled:opacity-50"
                                             >
                                                 <Send size={16} />
                                             </button>

@@ -32,7 +32,7 @@ const categorie1 = [
         icon: FileCheck,
         pdfUrl: null,
         wordUrl: null,
-        tone: 'from-emerald-500 to-teal-600',
+        tone: 'from-emerald-500 to-emerald-600',
         needsProjet: true,
     },
     {
@@ -65,7 +65,7 @@ const categorie2 = [
         icon: PieChart,
         pdfUrl: (annee) => `${route('admin.pdf.statistique')}?annee=${annee}`,
         wordUrl: (annee) => `${route('admin.pdf.statistique.word')}?annee=${annee}`,
-        tone: 'from-teal-500 to-emerald-600',
+        tone: 'from-emerald-500 to-emerald-600',
     },
     {
         id: 'etudiants',
@@ -83,7 +83,7 @@ const categorie2 = [
         icon: Users,
         pdfUrl: (annee) => `${route('admin.pdf.repartition-enseignants')}?annee=${annee}`,
         wordUrl: (annee) => `${route('admin.pdf.repartition-enseignants.word')}?annee=${annee}`,
-        tone: 'from-cyan-500 to-blue-600',
+        tone: 'from-blue-500 to-indigo-600',
     },
     {
         id: 'entreprises',
@@ -121,8 +121,8 @@ export default function Rapports({ projets = [], documents = [], stats = {} }) {
     const kpiCards = [
         { label: 'Total projets', sub: `${stats.stages || 0} stages / ${stats.memoires || 0} memoires`, value: stats.total_projets || projets.length, icon: BookOpen, tone: 'from-slate-500 to-slate-600' },
         { label: 'Taux de réussite', sub: `${stats.valides || 0} valides`, value: `${stats.taux_reussite || 0}%`, icon: CheckCircle, tone: 'from-emerald-500 to-green-500' },
-        { label: 'Soutenances', sub: `${stats.soutenances_planifiees || 0} planifiées / ${stats.soutenances_effectuees || 0} effectuées`, value: (stats.soutenances_planifiees || 0), icon: CalendarRange, tone: 'from-teal-500 to-emerald-500' },
-        { label: 'Étudiants / Enseignant', sub: `Moyenne par encadreur`, value: stats.moyenne_etudiants_par_enseignant || 0, icon: Users, tone: 'from-blue-500 to-cyan-500' },
+        { label: 'Soutenances', sub: `${stats.soutenances_planifiees || 0} planifiées / ${stats.soutenances_effectuees || 0} effectuées`, value: (stats.soutenances_planifiees || 0), icon: CalendarRange, tone: 'from-amber-500 to-amber-600' },
+        { label: 'Étudiants / Enseignant', sub: `Moyenne par encadreur`, value: stats.moyenne_etudiants_par_enseignant || 0, icon: Users, tone: 'from-violet-500 to-violet-600' },
     ];
 
     const openPdfPreview = (url) => {
@@ -200,10 +200,10 @@ export default function Rapports({ projets = [], documents = [], stats = {} }) {
                 <div className="panel-card p-5">
                     <div className="flex items-center justify-between mb-3">
                         <h3 className="text-sm font-semibold text-slate-700">Taux de réussite global</h3>
-                        <span className="text-sm font-bold text-teal-600">{stats.taux_reussite || 0}%</span>
+                        <span className="text-sm font-bold text-emerald-600">{stats.taux_reussite || 0}%</span>
                     </div>
                     <div className="h-3 w-full overflow-hidden rounded-full bg-slate-100">
-                        <div className="h-full rounded-full bg-gradient-to-r from-teal-400 to-emerald-500 transition-all duration-500" style={{ width: `${stats.taux_reussite || 0}%` }} />
+                        <div className="h-full rounded-full bg-gradient-to-r from-emerald-400 to-emerald-500 transition-all duration-500" style={{ width: `${stats.taux_reussite || 0}%` }} />
                     </div>
                     <p className="mt-2 text-xs text-slate-500">{stats.valides || 0} validé(s) sur {projets.length} projet(s)</p>
                 </div>
@@ -417,12 +417,12 @@ export default function Rapports({ projets = [], documents = [], stats = {} }) {
                                         <td className="px-5 py-3">
                                             <div className="flex items-center gap-1">
                                                 {p.type === 'Stage' && (
-                                                    <a href={route('admin.pdf.lettre-stage', p.id)} target="_blank" className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-teal-600 hover:bg-teal-50">
+                                                    <a href={route('admin.pdf.lettre-stage', p.id)} target="_blank" className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-emerald-600 hover:bg-emerald-50">
                                                         <FileText size={12} /> Lettre
                                                     </a>
                                                 )}
                                                 {(p.statut_actuel === 'Validé' || p.soutenance) && (
-                                                    <a href={`/admin/rapports/grille-cotation/${p.id}`} target="_blank" className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-purple-600 hover:bg-purple-50">
+                                                    <a href={`/admin/rapports/grille-cotation/${p.id}`} target="_blank" className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-violet-600 hover:bg-violet-50">
                                                         <FileCheck size={12} /> Fiche
                                                     </a>
                                                 )}

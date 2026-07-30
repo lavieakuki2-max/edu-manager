@@ -34,7 +34,7 @@ export default function Login({ status, canResetPassword }) {
         <GuestLayout>
             <Head title="Connexion" />
             <div className="mb-8">
-                <p className="text-sm font-semibold uppercase tracking-[.18em] text-teal-400">Bienvenue</p>
+                <p className="text-sm font-semibold uppercase tracking-[.18em] text-blue-400">Bienvenue</p>
                 <h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Connectez-vous</h1>
                 <p className="mt-2 text-sm text-slate-300">Retrouvez le suivi de vos projets académiques.</p>
             </div>
@@ -53,7 +53,7 @@ export default function Login({ status, canResetPassword }) {
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full border-white/10 bg-white/10 text-white placeholder-slate-400 focus:border-teal-400 focus:ring-teal-400/20"
+                        className="mt-1 block w-full border-white/10 bg-white/10 text-white placeholder-slate-400 focus:border-blue-400 focus:ring-blue-400/20"
                         autoComplete="username"
                         isFocused={true}
                         onChange={(e) => setData('email', e.target.value)}
@@ -68,7 +68,7 @@ export default function Login({ status, canResetPassword }) {
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full border-white/10 bg-white/10 text-white placeholder-slate-400 focus:border-teal-400 focus:ring-teal-400/20"
+                        className="mt-1 block w-full border-white/10 bg-white/10 text-white placeholder-slate-400 focus:border-blue-400 focus:ring-blue-400/20"
                         autoComplete="current-password"
                         onChange={(e) => setData('password', e.target.value)}
                     />
@@ -85,19 +85,19 @@ export default function Login({ status, canResetPassword }) {
                         <span className="text-sm text-slate-300">Se souvenir de moi</span>
                     </label>
                     {canResetPassword && (
-                        <Link href={route('password.request')} className="text-sm text-teal-400 hover:text-teal-300 transition">
+                        <Link href={route('password.request')} className="text-sm text-blue-400 hover:text-blue-300 transition">
                             Mot de passe oublié ?
                         </Link>
                     )}
                 </div>
 
-                <PrimaryButton className="w-full justify-center rounded-xl bg-teal-600 px-6 py-3 text-sm font-semibold text-white hover:bg-teal-500 transition shadow-lg shadow-teal-600/25" disabled={processing}>
+                <PrimaryButton className="w-full justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:from-blue-700 hover:to-indigo-700 transition shadow-lg shadow-blue-600/25" disabled={processing}>
                     Se connecter
                 </PrimaryButton>
 
                 <p className="text-center text-sm text-slate-400">
                     Pas encore de compte ?{' '}
-                    <Link href={route('register')} className="font-medium text-teal-400 hover:text-teal-300 transition">
+                    <Link href={route('register')} className="font-medium text-blue-400 hover:text-blue-300 transition">
                         Créer un compte
                     </Link>
                 </p>
@@ -120,17 +120,17 @@ export default function Login({ status, canResetPassword }) {
                     <button
                         type="button"
                         onClick={() => quickLogin('ngoy@uniluk.edu', 'password')}
-                        className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-4 text-white transition hover:bg-white/10 hover:border-cyan-400/40"
+                        className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-4 text-white transition hover:bg-white/10 hover:border-blue-400/40"
                     >
-                        <GraduationCap size={20} className="text-cyan-400" />
+                        <GraduationCap size={20} className="text-blue-400" />
                         <span className="text-xs font-medium">Enseignant</span>
                     </button>
                     <button
                         type="button"
                         onClick={() => quickLogin('kabongo@uniluk.edu', 'password')}
-                        className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-4 text-white transition hover:bg-white/10 hover:border-teal-400/40"
+                        className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-4 text-white transition hover:bg-white/10 hover:border-emerald-400/40"
                     >
-                        <Briefcase size={20} className="text-teal-400" />
+                        <Briefcase size={20} className="text-emerald-400" />
                         <span className="text-xs font-medium">Étudiant</span>
                     </button>
                 </div>

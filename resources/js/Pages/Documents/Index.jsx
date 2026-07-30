@@ -43,7 +43,7 @@ export default function Index({ documents, projets, canUpload }) {
                 </section>
 
                 {canUpload && (
-                    <section className="panel-card border-dashed border-teal-200 p-6">
+                    <section className="panel-card border-dashed border-blue-200 p-6">
                         <div className="mb-5">
                             <h2 className="text-lg font-semibold text-slate-950">Depot de livrable PDF</h2>
                             <p className="mt-1 text-sm text-slate-500">PDF uniquement - Max 10 Mo.</p>

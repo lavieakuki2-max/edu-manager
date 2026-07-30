@@ -163,7 +163,7 @@ export default function Index({ projets, enseignants, entreprises, canCreate, ca
                                                 key={step}
                                                 className={`rounded-xl px-3 py-2 text-center text-xs font-semibold transition ${
                                                     idx <= activeIdx
-                                                        ? 'bg-teal-50 text-teal-700'
+                                                        ? 'bg-emerald-50 text-emerald-700'
                                                         : 'bg-slate-100 text-slate-400'
                                                 }`}
                                             >
@@ -275,8 +275,8 @@ export default function Index({ projets, enseignants, entreprises, canCreate, ca
                                     </div>
 
                                     {createForm.data.entreprise_id === '__nouvelle__' && (
-                                        <div className="rounded-2xl border border-teal-200 bg-teal-50/50 p-4 space-y-4">
-                                            <p className="text-sm font-semibold text-teal-700">Nouvelle entreprise</p>
+                                        <div className="rounded-2xl border border-blue-200 bg-blue-50/50 p-4 space-y-4">
+                                            <p className="text-sm font-semibold text-blue-700">Nouvelle entreprise</p>
                                             <div>
                                                 <label className="mb-1.5 block text-sm font-semibold text-slate-700">Raison sociale *</label>
                                                 <input className="soft-input" value={createForm.data.nouvelle_entreprise} onChange={(e) => createForm.setData('nouvelle_entreprise', e.target.value)} placeholder="Nom de l'entreprise" />

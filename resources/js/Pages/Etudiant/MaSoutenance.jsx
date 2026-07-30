@@ -68,7 +68,7 @@ export default function MaSoutenance({ projet = null, soutenance = null }) {
                         <div className="border-b border-slate-200/80 p-6">
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-500 text-white shadow-lg">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-500 text-white shadow-lg">
                                         <CalendarRange size={22} />
                                     </div>
                                     <div>
@@ -85,7 +85,7 @@ export default function MaSoutenance({ projet = null, soutenance = null }) {
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5 space-y-4">
                                     <div className="flex items-center gap-3">
-                                        <Calendar size={18} className="text-teal-500" />
+                                        <Calendar size={18} className="text-blue-500" />
                                         <div>
                                             <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Date</p>
                                             <p className="mt-1 text-sm font-medium text-slate-950">
@@ -173,8 +173,8 @@ export default function MaSoutenance({ projet = null, soutenance = null }) {
                                         </div>
                                     )}
                                     {soutenance.membre?.user && (
-                                        <div className="rounded-xl border border-teal-200 bg-teal-50/50 p-3">
-                                            <p className="text-xs font-semibold text-teal-600 uppercase tracking-wide">Membre</p>
+                                        <div className="rounded-xl border border-emerald-200 bg-emerald-50/50 p-3">
+                                            <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wide">Membre</p>
                                             <p className="mt-1 text-sm font-medium text-slate-950">
                                                 {soutenance.membre.user.prenom} {soutenance.membre.user.nom}
                                             </p>

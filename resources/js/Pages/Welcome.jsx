@@ -10,9 +10,9 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
     ];
 
     const roles = [
-        { icon: GraduationCap, label: 'Etudiant', desc: 'Soumettez vos sujets, deposez vos documents et suivez votre progression.', color: 'from-teal-400 to-emerald-500' },
-        { icon: BookOpen, label: 'Encadreur', desc: 'Validez les sujets, commentez les travaux et orientez les etudiants.', color: 'from-cyan-400 to-blue-500' },
-        { icon: Shield, label: 'Administration', desc: 'Gerez les projets, planifiez les soutenances et generez les documents officiels.', color: 'from-amber-400 to-orange-500' },
+        { icon: GraduationCap, label: 'Etudiant', desc: 'Soumettez vos sujets, deposez vos documents et suivez votre progression.', accent: 'bg-emerald-50 text-emerald-600' },
+        { icon: BookOpen, label: 'Encadreur', desc: 'Validez les sujets, commentez les travaux et orientez les etudiants.', accent: 'bg-blue-50 text-blue-600' },
+        { icon: Shield, label: 'Administration', desc: 'Gerez les projets, planifiez les soutenances et generez les documents officiels.', accent: 'bg-amber-50 text-amber-600' },
     ];
 
     return (
@@ -23,14 +23,14 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                 <div
                     className="fixed inset-0 -z-10"
                     style={{
-                        background: 'linear-gradient(180deg, #08111f 0%, #0f172a 38%, #f8fafc 38%, #f8fafc 100%)',
+                        background: 'linear-gradient(180deg, #0f172a 0%, #0f172a 38%, #f8fafc 38%, #f8fafc 100%)',
                     }}
                 />
 
                 <header className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <nav className="flex items-center justify-between py-6">
                         <div className="flex items-center gap-3">
-                            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-500 text-sm font-black text-slate-950">ED</span>
+                            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-black text-white shadow-lg shadow-blue-600/30">ED</span>
                             <div>
                                 <div className="text-lg font-semibold leading-5 text-white">EduManager</div>
                                 <div className="text-xs text-slate-400">UNILUK</div>
@@ -81,8 +81,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                         {features.map((f) => {
                             const Icon = f.icon;
                             return (
-                                <div key={f.title} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                                    <div className="mb-4 inline-flex rounded-2xl bg-teal-50 p-3 text-teal-600">
+                                <div key={f.title} className="panel-card p-6">
+                                    <div className="mb-4 inline-flex rounded-2xl bg-blue-50 p-3 text-blue-600">
                                         <Icon size={22} />
                                     </div>
                                     <h3 className="text-base font-semibold text-slate-900">{f.title}</h3>
@@ -98,8 +98,8 @@ export default function Welcome({ auth, laravelVersion, phpVersion }) {
                             {roles.map((r) => {
                                 const Icon = r.icon;
                                 return (
-                                    <div key={r.label} className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-                                        <div className={`mx-auto mb-5 inline-flex rounded-2xl bg-gradient-to-br p-4 text-white shadow-lg ${r.color}`}>
+                                    <div key={r.label} className="panel-card p-8 text-center">
+                                        <div className={`mx-auto mb-5 inline-flex rounded-2xl p-4 shadow-sm ${r.accent}`}>
                                             <Icon size={24} />
                                         </div>
                                         <h3 className="text-lg font-semibold text-slate-900">{r.label}</h3>

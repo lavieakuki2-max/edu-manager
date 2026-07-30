@@ -95,7 +95,7 @@ export default function AdminProjets({ projets, stats, enseignants, filieres, an
         { label: 'Total projets', value: stats.total, sub: `${stats.stages} Stages / ${stats.memoires} Mémoires / ${stats.projets_tutores} Projets Tutorés`, icon: Briefcase, tone: 'from-slate-500 to-slate-600' },
         { label: 'En attente', value: stats.en_attente, sub: `Sujets sans encadreur`, icon: Clock, tone: 'from-amber-500 to-orange-600', urgent: stats.en_attente > 0 },
         { label: 'En cours', value: stats.en_cours, sub: `${stats.a_corriger} à corriger`, icon: BookOpen, tone: 'from-blue-500 to-indigo-600' },
-        { label: 'Prêts / Validés', value: `${stats.prets} / ${stats.valides}`, sub: `Taux: ${stats.taux_reussite}%`, icon: Award, tone: 'from-emerald-500 to-teal-600' },
+        { label: 'Prêts / Validés', value: `${stats.prets} / ${stats.valides}`, sub: `Taux: ${stats.taux_reussite}%`, icon: Award, tone: 'from-emerald-500 to-emerald-600' },
     ];
 
     return (
@@ -270,7 +270,7 @@ export default function AdminProjets({ projets, stats, enseignants, filieres, an
                                                         <Link href={route('projets.show', projet.id)} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700" title="Voir">
                                                             <Eye size={15} />
                                                         </Link>
-                                                        <button onClick={() => openAssign(projet)} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-teal-600" title={projet.enseignant_id ? 'Réaffecter' : 'Assigner'}>
+                                                        <button onClick={() => openAssign(projet)} className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-blue-600" title={projet.enseignant_id ? 'Réaffecter' : 'Assigner'}>
                                                             {projet.enseignant_id ? <UserCheck size={15} /> : <UserPlus size={15} />}
                                                         </button>
                                                         {projet.statut_actuel === 'Prêt pour Soutenance' && (
@@ -299,7 +299,7 @@ export default function AdminProjets({ projets, stats, enseignants, filieres, an
                                                                 {projet.documents?.length > 0 && (
                                                                     <div className="mt-1 flex flex-wrap gap-1">
                                                                         {projet.documents.slice(0, 3).map((doc) => (
-                                                                            <a key={doc.id} href={route('documents.download', doc.id)} className="inline-flex items-center gap-1 rounded-md bg-white px-2 py-0.5 text-[10px] text-slate-600 shadow-sm hover:text-teal-600">
+                                                                            <a key={doc.id} href={route('documents.download', doc.id)} className="inline-flex items-center gap-1 rounded-md bg-white px-2 py-0.5 text-[10px] text-slate-600 shadow-sm hover:text-blue-600">
                                                                                 <Download size={10} /> v{doc.version}
                                                                             </a>
                                                                         ))}

@@ -73,7 +73,7 @@ export default function Dashboard({ role, userName, stats, projets, documentsRec
                                 </div>
                                 <div className="mt-3 h-2 rounded-full bg-white/10">
                                     <div
-                                        className="h-2 rounded-full bg-gradient-to-r from-teal-400 to-cyan-400 transition-all duration-500"
+                                        className="h-2 rounded-full bg-gradient-to-r from-blue-400 to-indigo-400 transition-all duration-500"
                                         style={{ width: `${progressPercent}%` }}
                                     />
                                 </div>

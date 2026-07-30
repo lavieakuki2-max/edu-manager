@@ -47,14 +47,20 @@ class EnseignantController extends Controller
     public function commentaires(Request $request)
     {
         $enseignant = $request->user()->enseignant;
-        $projets = ProjetAcademique::where('enseignant_id', $enseignant?->id)->pluck('id');
-
-        $commentaires = Commentaire::whereIn('projet_id', $projets)
-            ->with(['projet', 'auteur', 'projet.etudiant.user'])
-            ->latest()
+        $projets = ProjetAcademique::where('enseignant_id', $enseignant?->id)
+            ->with(['etudiant.user', 'enseignant.user'])
             ->get();
 
+        $projetIds = $projets->pluck('id');
+
+        $commentaires = Commentaire::whereIn('projet_id', $projetIds)
+            ->with(['projet', 'auteur'])
+            ->latest()
+            ->get()
+            ->groupBy('projet_id');
+
         return Inertia::render('Enseignant/Commentaires', [
+            'projets' => $projets,
             'commentaires' => $commentaires,
         ]);
     }

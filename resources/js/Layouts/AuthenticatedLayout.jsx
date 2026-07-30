@@ -3,7 +3,7 @@ import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
 import UserAvatar from '@/Components/UserAvatar';
 import { Link, router, usePage } from '@inertiajs/react';
-import { Bell, BookOpenText, Briefcase, Building2, CheckCheck, ClipboardList, FileText, GraduationCap, LayoutDashboard, LogOut, Menu, MessageSquare, Settings, Shield, Users, X } from 'lucide-react';
+import { Bell, BookOpenText, Briefcase, Building2, CheckCheck, ClipboardList, Clock, FileText, GraduationCap, LayoutDashboard, LogOut, Menu, MessageSquare, Settings, Shield, Users, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export default function AuthenticatedLayout({ header, children }) {
@@ -43,19 +43,30 @@ export default function AuthenticatedLayout({ header, children }) {
         }
     }, [notifOpen]);
 
-    const markAsRead = useCallback((notif) => {
-        if (!notif.est_lu) {
-            fetch(route('notifications.markAsRead', notif.id), { method: 'PATCH' })
-                .then((r) => r.json())
-                .then((data) => {
-                    setUnreadCount(data.unread_count || 0);
-                    setNotifications((prev) => prev.map((n) => n.id === notif.id ? { ...n, est_lu: true } : n));
-                })
-                .catch(() => {});
-        }
+    const markAsRead = useCallback(async (notif) => {
+        const fetchPromise = !notif.est_lu
+            ? fetch(route('notifications.markAsRead', notif.id), {
+                  method: 'PATCH',
+                  headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
+              })
+                  .then((r) => r.json())
+                  .then((data) => {
+                      setUnreadCount(data.unread_count || 0);
+                      setNotifications((prev) => prev.filter((n) => n.id !== notif.id));
+                  })
+                  .catch(() => {})
+            : Promise.resolve();
+
+        await fetchPromise;
+
+        setNotifOpen(false);
+
         if (notif.lien_url) {
-            setNotifOpen(false);
-            router.visit(notif.lien_url);
+            try {
+                router.visit(notif.lien_url);
+            } catch {
+                window.location.href = route('dashboard');
+            }
         }
     }, []);
 
@@ -64,7 +75,7 @@ export default function AuthenticatedLayout({ header, children }) {
             .then((r) => r.json())
             .then((data) => {
                 setUnreadCount(data.unread_count || 0);
-                setNotifications((prev) => prev.map((n) => ({ ...n, est_lu: true })));
+                setNotifications([]);
             })
             .catch(() => {});
     }, []);
@@ -77,6 +88,7 @@ export default function AuthenticatedLayout({ header, children }) {
             { label: 'Utilisateurs', href: route('admin.users.index'), active: route().current('admin.users.*'), icon: Users },
             { label: 'Projets', href: route('admin.projets.index'), active: route().current('admin.projets.*') || route().current('admin.projets.*'), icon: Briefcase },
             { label: 'Soutenances', href: route('admin.soutenances.index'), active: route().current('admin.soutenances.*'), icon: GraduationCap },
+            { label: 'Stages', href: route('admin.stages.index'), active: route().current('admin.stages.*'), icon: Clock },
             { label: 'Entreprises', href: route('admin.entreprises.index'), active: route().current('admin.entreprises.*'), icon: Building2 },
             { label: 'Rapports', href: route('admin.rapports'), active: route().current('admin.rapports'), icon: FileText },
             { label: 'Parametres', href: route('profile.edit'), active: route().current('profile.*'), icon: Settings },
@@ -88,13 +100,14 @@ export default function AuthenticatedLayout({ header, children }) {
             { label: 'Projets Suivis', href: route('projets.index'), active: route().current('projets.*'), icon: ClipboardList },
             { label: 'Commentaires', href: route('enseignant.commentaires'), active: route().current('enseignant.commentaires'), icon: MessageSquare },
             { label: 'Soutenances', href: route('enseignant.soutenances'), active: route().current('enseignant.soutenances'), icon: GraduationCap },
-            { label: 'Documents', href: route('documents.index'), active: route().current('documents.*'), icon: FileText },
+            { label: 'Documents', href: route('enseignant.documents'), active: route().current('enseignant.documents'), icon: FileText },
             { label: 'Parametres', href: route('profile.edit'), active: route().current('profile.*'), icon: Settings },
         );
     } else {
         navItems.push(
             { label: 'Dashboard', href: route('dashboard'), active: route().current('dashboard'), icon: LayoutDashboard },
             { label: 'Mon Projet', href: route('projets.index'), active: route().current('projets.*'), icon: Briefcase },
+            { label: 'Suivi Stage', href: route('etudiant.stage'), active: route().current('etudiant.stage'), icon: Clock },
             { label: 'Documents', href: route('documents.index'), active: route().current('documents.*'), icon: FileText },
             { label: 'Discussions', href: route('etudiant.discussions'), active: route().current('etudiant.discussions'), icon: MessageSquare },
             { label: 'Ma Soutenance', href: route('etudiant.soutenance'), active: route().current('etudiant.soutenance'), icon: GraduationCap },
@@ -103,7 +116,7 @@ export default function AuthenticatedLayout({ header, children }) {
     }
 
     const roleLabel = user.role === 'admin' ? 'Administration' : user.role === 'enseignant' ? 'Encadreur' : 'Etudiant';
-    const roleAccent = user.role === 'admin' ? 'from-amber-400 to-orange-500' : user.role === 'enseignant' ? 'from-blue-400 to-indigo-500' : 'from-emerald-400 to-teal-500';
+    const roleAccent = user.role === 'admin' ? 'from-amber-400 to-orange-500' : user.role === 'enseignant' ? 'from-blue-400 to-indigo-500' : 'from-emerald-400 to-emerald-500';
 
     const Navigation = ({ mobile = false }) => (
         <nav className={`flex-1 space-y-1 ${mobile ? 'px-3 py-5' : 'px-4 py-6'}`}>

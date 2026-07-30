@@ -132,7 +132,7 @@ export default function Entreprises({ entreprises = [], stats = {} }) {
                                     <tr key={entreprise.id} className="transition hover:bg-slate-50">
                                         <td className="px-5 py-3">
                                             <div className="flex items-center gap-3">
-                                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
                                                     <Building2 size={18} />
                                                 </div>
                                                 <div>
@@ -313,7 +313,7 @@ export default function Entreprises({ entreprises = [], stats = {} }) {
 
                         <div className="space-y-4">
                             <div className="flex items-center gap-4">
-                                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-500 text-lg font-bold text-slate-950">
+                                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-500 text-lg font-bold text-white">
                                     <Building2 size={24} />
                                 </div>
                                 <div>

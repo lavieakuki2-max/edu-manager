@@ -66,7 +66,7 @@ export default function Soutenances({ soutenances = [], monRole, enseignantId })
         encadreur: 'bg-purple-50 text-purple-700 border border-purple-200',
         president: 'bg-amber-50 text-amber-700 border border-amber-200',
         rapporteur: 'bg-blue-50 text-blue-700 border border-blue-200',
-        membre: 'bg-teal-50 text-teal-700 border border-teal-200',
+        membre: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
     };
 
     const filtered = soutenances.filter((s) => {
@@ -259,10 +259,10 @@ export default function Soutenances({ soutenances = [], monRole, enseignantId })
                                             <td className="px-5 py-3">
                                                 {soutenance.note_finale != null ? (
                                                     <div className="flex flex-col gap-0.5">
-                                                        <span className="status-pill bg-teal-50 text-teal-700 border border-teal-200 text-xs">
-                                                            <Award size={12} />
-                                                            {soutenance.note_finale}/20
-                                                        </span>
+                                                            <span className="status-pill bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs">
+                                                                <Award size={12} />
+                                                                {soutenance.note_finale}/20
+                                                            </span>
                                                         {soutenance.mention && (
                                                             <span className={`status-pill text-xs ${mentionColors[soutenance.mention] || 'bg-slate-100 text-slate-600'}`}>
                                                                 {soutenance.mention}

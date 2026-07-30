@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\ProjetController as AdminProjetController;
 use App\Http\Controllers\Admin\RapportController;
+use App\Http\Controllers\Admin\StageSuiviController as AdminStageSuiviController;
 use App\Http\Controllers\CommentaireController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
@@ -45,6 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
     Route::patch('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.markAsRead');
     Route::patch('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+    Route::post('/notifications/{notification}/redirect', [NotificationController::class, 'redirect'])->name('notifications.redirect');
 
     Route::middleware('role:admin')->group(function () {
         Route::get('/admin/projets', [AdminProjetController::class, 'index'])->name('admin.projets.index');
@@ -85,18 +87,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/rapports/annuaire-entreprises/word', [RapportController::class, 'annuaireEntreprisesWord'])->name('admin.pdf.annuaire-entreprises.word');
         Route::get('/admin/rapports/attestation/{projet}', [RapportController::class, 'attestationValidation'])->name('admin.pdf.attestation');
         Route::get('/admin/rapports/pv-soutenance/{projet}', [RapportController::class, 'pvSoutenance'])->name('admin.pdf.pv-soutenance');
+
+        Route::get('/admin/stages', [AdminStageSuiviController::class, 'index'])->name('admin.stages.index');
+        Route::get('/admin/stages/{stage}', [AdminStageSuiviController::class, 'show'])->name('admin.stages.show');
+        Route::patch('/admin/stages/{stage}/statut', [AdminStageSuiviController::class, 'updateStatut'])->name('admin.stages.statut');
     });
 
     Route::middleware('role:enseignant')->group(function () {
         Route::get('/enseignant/etudiants', [EnseignantController::class, 'mesEtudiants'])->name('enseignant.etudiants');
         Route::get('/enseignant/commentaires', [EnseignantController::class, 'commentaires'])->name('enseignant.commentaires');
         Route::get('/enseignant/soutenances', [EnseignantController::class, 'soutenances'])->name('enseignant.soutenances');
+        Route::get('/enseignant/documents', [EnseignantController::class, 'documents'])->name('enseignant.documents');
         Route::post('/enseignant/soutenances/{soutenance}/evaluer', [SoutenanceController::class, 'evaluation'])->name('enseignant.soutenances.evaluation');
     });
 
     Route::middleware('role:etudiant')->group(function () {
         Route::get('/etudiant/discussions', [EtudiantController::class, 'discussions'])->name('etudiant.discussions');
         Route::get('/etudiant/soutenance', [EtudiantController::class, 'maSoutenance'])->name('etudiant.soutenance');
+        Route::get('/etudiant/stage', [EtudiantController::class, 'suiviStage'])->name('etudiant.stage');
+        Route::post('/etudiant/stage/journal', [EtudiantController::class, 'journalStore'])->name('etudiant.stage.journal.store');
+        Route::put('/etudiant/stage/journal/{journal}', [EtudiantController::class, 'journalUpdate'])->name('etudiant.stage.journal.update');
+        Route::delete('/etudiant/stage/journal/{journal}', [EtudiantController::class, 'journalDestroy'])->name('etudiant.stage.journal.destroy');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

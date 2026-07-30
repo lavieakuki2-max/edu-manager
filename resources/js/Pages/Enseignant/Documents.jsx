@@ -1,5 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import {
     FileText, Search, Download, GraduationCap, BookOpen, Calendar,
@@ -12,7 +12,7 @@ export default function Documents({ documents = [] }) {
         if (!search) return true;
         const q = search.toLowerCase();
         return (
-            (d.nom || d.filename || '').toLowerCase().includes(q) ||
+            (d.titre_fichier || '').toLowerCase().includes(q) ||
             (d.projet?.etudiant?.user?.prenom || '').toLowerCase().includes(q) ||
             (d.projet?.etudiant?.user?.nom || '').toLowerCase().includes(q) ||
             (d.projet?.titre || '').toLowerCase().includes(q)
@@ -84,7 +84,7 @@ export default function Documents({ documents = [] }) {
                                         <td className="px-5 py-3">
                                             <div className="flex items-center gap-2">
                                                 <FileText size={14} className="text-slate-400" />
-                                                <span className="font-medium text-slate-950">{doc.nom || doc.filename || '-'}</span>
+                                                <span className="font-medium text-slate-950">{doc.titre_fichier || '-'}</span>
                                             </div>
                                         </td>
                                         <td className="px-5 py-3">
@@ -96,8 +96,8 @@ export default function Documents({ documents = [] }) {
                                             <div className="flex items-center gap-2">
                                                 <Calendar size={14} className="text-slate-400" />
                                                 <span className="text-slate-600">
-                                                    {doc.created_at
-                                                        ? new Date(doc.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })
+                                                    {doc.created_at || doc.date_depot
+                                                        ? new Date(doc.created_at || doc.date_depot).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' })
                                                         : '-'}
                                                 </span>
                                             </div>
@@ -109,16 +109,13 @@ export default function Documents({ documents = [] }) {
                                             </div>
                                         </td>
                                         <td className="px-5 py-3">
-                                            {doc.url && (
-                                                <a
-                                                    href={doc.url}
-                                                    target="_blank"
-                                                    rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-medium text-teal-600 transition hover:bg-teal-50"
-                                                >
-                                                    <Download size={13} /> Télécharger
-                                                </a>
-                                            )}
+                                            <Link
+                                                href={route('documents.download', doc.id)}
+                                                className="inline-flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-medium text-blue-600 transition hover:bg-blue-50"
+                                                preserveState
+                                            >
+                                                <Download size={13} /> Télécharger
+                                            </Link>
                                         </td>
                                     </tr>
                                 ))}

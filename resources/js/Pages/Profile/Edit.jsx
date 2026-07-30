@@ -41,19 +41,15 @@ export default function Edit({ mustVerifyEmail, status }) {
         formData.append('photo', file);
 
         try {
-            const res = await fetch(route('profile.photo.update'), {
-                method: 'POST',
-                headers: { Accept: 'application/json' },
-                body: formData,
-            });
-            const data = await res.json();
-            if (data.success) {
-                setPhotoUrl(data.photo_url);
+            const res = await window.axios.post(route('profile.photo.update'), formData);
+            if (res.data?.success) {
+                setPhotoUrl(res.data.photo_url);
                 setPreview(null);
                 if (fileInputRef.current) fileInputRef.current.value = '';
             }
         } catch (err) {
-            alert('Erreur lors du téléversement.');
+            const msg = err.response?.data?.message || 'Erreur lors du téléversement.';
+            alert(msg);
         } finally {
             setUploading(false);
         }
@@ -63,18 +59,15 @@ export default function Edit({ mustVerifyEmail, status }) {
         if (!confirm('Supprimer votre photo de profil ?')) return;
 
         try {
-            const res = await fetch(route('profile.photo.destroy'), {
-                method: 'DELETE',
-                headers: { Accept: 'application/json' },
-            });
-            const data = await res.json();
-            if (data.success) {
+            const res = await window.axios.delete(route('profile.photo.destroy'));
+            if (res.data?.success) {
                 setPhotoUrl(null);
                 setPreview(null);
                 if (fileInputRef.current) fileInputRef.current.value = '';
             }
         } catch (err) {
-            alert('Erreur lors de la suppression.');
+            const msg = err.response?.data?.message || 'Erreur lors de la suppression.';
+            alert(msg);
         }
     }, []);
 
@@ -82,7 +75,7 @@ export default function Edit({ mustVerifyEmail, status }) {
         <AuthenticatedLayout
             header={
                 <div className="flex items-center gap-3">
-                    <Camera size={22} className="text-teal-400" />
+                    <Camera size={22} className="text-blue-400" />
                     <h2 className="text-xl font-semibold leading-tight text-white">Paramètres du profil</h2>
                 </div>
             }
@@ -149,8 +142,8 @@ export default function Edit({ mustVerifyEmail, status }) {
                         </div>
 
                         {preview && (
-                            <div className="mt-4 rounded-2xl border border-teal-200 bg-teal-50 px-4 py-3">
-                                <p className="text-xs text-teal-700">Aperçu avant enregistrement. Cliquez sur <strong>Enregistrer</strong> pour confirmer.</p>
+                            <div className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3">
+                                <p className="text-xs text-blue-700">Aperçu avant enregistrement. Cliquez sur <strong>Enregistrer</strong> pour confirmer.</p>
                             </div>
                         )}
                     </div>

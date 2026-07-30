@@ -97,7 +97,7 @@ export default function MesEtudiants({ etudiants = [], stats = {} }) {
                             <div key={etudiant.id} className="panel-card overflow-hidden transition hover:shadow-lg">
                                 <div className="p-5">
                                     <div className="flex items-start gap-3">
-                                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-500 text-sm font-bold text-slate-950">
+                                        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-500 text-sm font-bold text-white">
                                             {etudiant.user?.prenom?.charAt(0)}{etudiant.user?.nom?.charAt(0)}
                                         </div>
                                         <div className="min-w-0 flex-1">

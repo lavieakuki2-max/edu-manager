@@ -60,6 +60,13 @@ class DocumentController extends Controller
     {
         $this->authorize('view', $document);
 
-        return Storage::disk('public')->download($document->chemin_stockage, $document->titre_fichier);
+        if (!Storage::disk('public')->exists($document->chemin_stockage)) {
+            return back()->with('error', 'Le fichier n\'existe plus sur le serveur.');
+        }
+
+        return Storage::disk('public')->download($document->chemin_stockage, $document->titre_fichier, [
+            'Content-Disposition' => 'attachment; filename="' . $document->titre_fichier . '"',
+            'Content-Type' => 'application/octet-stream',
+        ]);
     }
 }

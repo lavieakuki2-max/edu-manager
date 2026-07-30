@@ -41,7 +41,7 @@ export default function UserAvatar({ user, size = 'md', className = '' }) {
     }
 
     return (
-        <span className={`${sizeClass} flex shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-500 font-bold text-slate-950 ${className}`}>
+        <span className={`${sizeClass} flex shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-500 font-bold text-white ${className}`}>
             {user?.prenom?.charAt(0) ?? <UserIcon size={iconSize} />}
         </span>
     );
