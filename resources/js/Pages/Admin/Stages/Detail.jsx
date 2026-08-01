@@ -61,12 +61,16 @@ export default function StageDetail({ stage }) {
                             </p>
                         </div>
                         <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => window.print()}
-                                className="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/20 transition-colors"
-                            >
-                                <Download size={15} /> Exporter
-                            </button>
+                            {projet && (
+                                <a
+                                    href={route('admin.pdf.lettre-stage', projet.id)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-sm text-white hover:bg-white/20 transition-colors"
+                                >
+                                    <Download size={15} /> Lettre de stage (PDF)
+                                </a>
+                            )}
                         </div>
                     </div>
                 </section>

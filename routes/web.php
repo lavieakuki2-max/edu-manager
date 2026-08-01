@@ -105,6 +105,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/etudiant/discussions', [EtudiantController::class, 'discussions'])->name('etudiant.discussions');
         Route::get('/etudiant/soutenance', [EtudiantController::class, 'maSoutenance'])->name('etudiant.soutenance');
         Route::get('/etudiant/stage', [EtudiantController::class, 'suiviStage'])->name('etudiant.stage');
+        Route::get('/etudiant/stage/lettre', [EtudiantController::class, 'downloadLettreStage'])->name('etudiant.stage.lettre');
         Route::post('/etudiant/stage/journal', [EtudiantController::class, 'journalStore'])->name('etudiant.stage.journal.store');
         Route::put('/etudiant/stage/journal/{journal}', [EtudiantController::class, 'journalUpdate'])->name('etudiant.stage.journal.update');
         Route::delete('/etudiant/stage/journal/{journal}', [EtudiantController::class, 'journalDestroy'])->name('etudiant.stage.journal.destroy');

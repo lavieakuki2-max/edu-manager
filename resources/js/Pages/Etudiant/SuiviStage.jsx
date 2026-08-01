@@ -192,9 +192,19 @@ export default function SuiviStage({ projet = null, stage = null }) {
                             </p>
                         </div>
                         {stage && (
-                            <span className={`status-pill text-xs ${getStatutColor(stage.statut_courant)}`}>
-                                {getStatutLabel(stage.statut_courant)}
-                            </span>
+                            <div className="flex items-center gap-2">
+                                <span className={`status-pill text-xs ${getStatutColor(stage.statut_courant)}`}>
+                                    {getStatutLabel(stage.statut_courant)}
+                                </span>
+                                <a
+                                    href={route('etudiant.stage.lettre')}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="status-pill bg-white/10 text-white/90 hover:bg-white/20 inline-flex items-center gap-1 text-xs"
+                                >
+                                    <FileText size={12} /> PDF
+                                </a>
+                            </div>
                         )}
                     </div>
                 </section>

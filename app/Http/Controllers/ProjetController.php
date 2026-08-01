@@ -79,58 +79,73 @@ class ProjetController extends Controller
 
     public function store(StoreProjetRequest $request): RedirectResponse
     {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        $projet = ProjetAcademique::create([
-            'titre' => $validated['titre'],
-            'description' => $validated['description'],
-            'type' => $validated['type'],
-            'annee_academique' => $validated['annee_academique'],
-            'statut_actuel' => 'Sujet Soumis',
-            'etudiant_id' => $request->user()->etudiant->id,
-        ]);
-
-        if ($validated['type'] === 'Memoire') {
-            $projet->memoire()->create([
-                'theme_recherche' => $validated['theme_recherche'],
-                'mots_cles' => $validated['mots_cles'] ?? null,
-            ]);
-        } else        if ($validated['type'] === 'Stage') {
-            $entrepriseId = $validated['entreprise_id'] ?? null;
-
-            if (!$entrepriseId && !empty($validated['nouvelle_entreprise'])) {
-                $nouvelle = Entreprise::create([
-                    'raison_sociale' => $validated['nouvelle_entreprise'],
-                    'adresse' => $validated['nouvelle_entreprise_adresse'] ?? null,
-                    'telephone' => $validated['nouvelle_entreprise_telephone'] ?? null,
-                    'email' => $validated['nouvelle_entreprise_email'] ?? null,
-                    'maitre_stage' => $validated['nouvelle_entreprise_maitre_stage'] ?? null,
-                    'maitre_stage_telephone' => $validated['nouvelle_entreprise_maitre_stage_telephone'] ?? null,
-                    'maitre_stage_email' => $validated['nouvelle_entreprise_maitre_stage_email'] ?? null,
-                ]);
-                $entrepriseId = $nouvelle->id;
+            $etudiant = $request->user()->etudiant;
+            if (!$etudiant) {
+                return back()->with('error', 'Profil étudiant introuvable.');
             }
 
-            $projet->stage()->create([
-                'entreprise_id' => $entrepriseId,
-                'date_debut' => $validated['date_debut'],
-                'date_fin' => $validated['date_fin'],
-                'objectifs_stage' => $validated['objectifs_stage'],
+            $projet = ProjetAcademique::create([
+                'titre' => $validated['titre'],
+                'description' => $validated['description'],
+                'type' => $validated['type'],
+                'annee_academique' => $validated['annee_academique'],
+                'statut_actuel' => 'Sujet Soumis',
+                'etudiant_id' => $etudiant->id,
             ]);
+
+            if ($validated['type'] === 'Memoire') {
+                $projet->memoire()->create([
+                    'theme_recherche' => $validated['theme_recherche'],
+                    'mots_cles' => $validated['mots_cles'] ?? null,
+                ]);
+            } elseif ($validated['type'] === 'Stage') {
+                $entrepriseId = $validated['entreprise_id'] ?? null;
+
+                if (!$entrepriseId && !empty($validated['nouvelle_entreprise'])) {
+                    $nouvelle = Entreprise::create([
+                        'raison_sociale' => $validated['nouvelle_entreprise'],
+                        'adresse' => $validated['nouvelle_entreprise_adresse'] ?? '',
+                        'telephone' => $validated['nouvelle_entreprise_telephone'] ?? '',
+                        'email' => $validated['nouvelle_entreprise_email'] ?? null,
+                        'maitre_stage' => $validated['nouvelle_entreprise_maitre_stage'] ?? null,
+                        'maitre_stage_telephone' => $validated['nouvelle_entreprise_maitre_stage_telephone'] ?? null,
+                        'maitre_stage_email' => $validated['nouvelle_entreprise_maitre_stage_email'] ?? null,
+                    ]);
+                    $entrepriseId = $nouvelle->id;
+                }
+
+                $projet->stage()->create([
+                    'entreprise_id' => $entrepriseId,
+                    'date_debut' => $validated['date_debut'],
+                    'date_fin' => $validated['date_fin'],
+                    'objectifs_stage' => $validated['objectifs_stage'],
+                ]);
+            }
+
+            NotificationService::notifierSoumissionSujet($projet);
+
+            return back()->with('success', 'Sujet soumis avec succès.');
+        } catch (\Exception $e) {
+            Log::error('Erreur soumission sujet: ' . $e->getMessage());
+            return back()->with('error', 'Erreur lors de la soumission du sujet.');
         }
-
-        NotificationService::notifierSoumissionSujet($projet);
-
-        return back()->with('success', 'Sujet soumis avec succès.');
     }
 
     public function updateStatut(UpdateStatutRequest $request, ProjetAcademique $projet): RedirectResponse
     {
-        $validated = $request->validated();
+        try {
+            $validated = $request->validated();
 
-        $workflow = app(WorkflowService::class);
-        $workflow->transition($projet, $validated['statut_actuel'], $validated['commentaire'] ?? null);
+            $workflow = app(WorkflowService::class);
+            $workflow->transition($projet, $validated['statut_actuel'], $validated['commentaire'] ?? null);
 
-        return back()->with('success', 'Statut mis à jour.');
+            return back()->with('success', 'Statut mis à jour.');
+        } catch (\Exception $e) {
+            Log::error('Erreur mise à jour statut: ' . $e->getMessage());
+            return back()->with('error', 'Erreur lors de la mise à jour du statut.');
+        }
     }
 }

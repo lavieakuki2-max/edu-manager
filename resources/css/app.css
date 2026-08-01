@@ -9,11 +9,17 @@
 
     html {
         scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
     }
 
     body {
         @apply bg-[#F8FAFC] text-slate-700 antialiased;
         font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    button,
+    a {
+        -webkit-tap-highlight-color: transparent;
     }
 
     ::selection {
@@ -66,4 +72,45 @@
     .status-pill {
         @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold;
     }
+
+    .touch-target {
+        @apply inline-flex min-h-[44px] min-w-[44px] items-center justify-center;
+    }
+}
+
+/* Modal panels: keep them inside the viewport and vertically scrollable on small screens */
+.fixed.inset-0 > div.relative.w-full {
+    max-height: 90vh;
+    max-height: calc(100dvh - 2rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* iOS safe areas (notch / home indicator) */
+@supports (padding: max(0px)) {
+    body {
+        padding-bottom: max(0px, env(safe-area-inset-bottom));
+    }
+
+    .edumanager-shell {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+    }
+}
+
+/* Minimum 44x44px touch targets on touch devices */
+@media (pointer: coarse) {
+    button.rounded-xl,
+    button.rounded-lg,
+    a.rounded-xl,
+    a.rounded-lg,
+    .soft-button {
+        min-height: 44px;
+    }
+}
+
+/* Data tables: ensure horizontal scroll instead of squashed columns on small screens */
+.overflow-x-auto > table.w-full {
+    min-width: 640px;
 }

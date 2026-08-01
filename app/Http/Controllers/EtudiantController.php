@@ -6,8 +6,10 @@ use App\Models\Commentaire;
 use App\Models\JournalStage;
 use App\Models\ProjetAcademique;
 use App\Models\Soutenance;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class EtudiantController extends Controller
@@ -121,6 +123,32 @@ class EtudiantController extends Controller
         $journal->update(['activites' => $validated['activites']]);
 
         return back()->with('success', 'Rapport mis à jour.');
+    }
+
+    public function downloadLettreStage(Request $request)
+    {
+        try {
+            $etudiant = $request->user()->etudiant;
+
+            if (!$etudiant) {
+                return back()->with('error', 'Profil étudiant introuvable.');
+            }
+
+            $projet = ProjetAcademique::where('etudiant_id', $etudiant->id)
+                ->where('type', 'Stage')
+                ->with('etudiant.user', 'stage.entreprise', 'enseignant.user')
+                ->first();
+
+            if (!$projet || !$projet->stage) {
+                return back()->with('error', 'Aucun stage trouvé.');
+            }
+
+            return Pdf::loadView('pdf.lettre-stage-v2', compact('projet'))
+                ->download('lettre-stage-'.$projet->id.'.pdf');
+        } catch (\Exception $e) {
+            Log::error('Erreur téléchargement lettre stage étudiant: ' . $e->getMessage());
+            return back()->with('error', 'Erreur lors du téléchargement de la lettre de stage.');
+        }
     }
 
     public function journalDestroy(JournalStage $journal): RedirectResponse

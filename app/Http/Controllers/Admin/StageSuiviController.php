@@ -16,6 +16,7 @@ class StageSuiviController extends Controller
             'projet.etudiant.user',
             'projet.enseignant.user',
             'entreprise',
+            'journalEntries',
         ]);
 
         $filters = $request->only(['statut', 'search', 'filiere']);
@@ -33,11 +34,13 @@ class StageSuiviController extends Controller
 
         if (!empty($filters['search'])) {
             $search = $filters['search'];
-            $query->whereHas('projet.etudiant.user', function ($q) use ($search) {
-                $q->where('nom', 'like', "%{$search}%")
-                  ->orWhere('prenom', 'like', "%{$search}%");
-            })->orWhereHas('entreprise', function ($q) use ($search) {
-                $q->where('raison_sociale', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('projet.etudiant.user', function ($q2) use ($search) {
+                    $q2->where('nom', 'like', "%{$search}%")
+                       ->orWhere('prenom', 'like', "%{$search}%");
+                })->orWhereHas('entreprise', function ($q2) use ($search) {
+                    $q2->where('raison_sociale', 'like', "%{$search}%");
+                });
             });
         }
 
@@ -47,10 +50,7 @@ class StageSuiviController extends Controller
             });
         }
 
-        $stages = $query->orderBy('date_debut', 'desc')->get()->map(function ($stage) {
-            $stage->load('journalEntries');
-            return $stage;
-        });
+        $stages = $query->orderBy('date_debut', 'desc')->get();
 
         $stats = [
             'total' => Stage::count(),

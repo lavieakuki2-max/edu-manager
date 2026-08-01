@@ -44,34 +44,22 @@ export default function AuthenticatedLayout({ header, children }) {
     }, [notifOpen]);
 
     const markAsRead = useCallback(async (notif) => {
-        const fetchPromise = !notif.est_lu
-            ? fetch(route('notifications.markAsRead', notif.id), {
-                  method: 'PATCH',
-                  headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' },
-              })
-                  .then((r) => r.json())
-                  .then((data) => {
-                      setUnreadCount(data.unread_count || 0);
-                      setNotifications((prev) => prev.filter((n) => n.id !== notif.id));
-                  })
-                  .catch(() => {})
-            : Promise.resolve();
-
-        await fetchPromise;
-
         setNotifOpen(false);
+        setNotifications((prev) => prev.filter((n) => n.id !== notif.id));
+        setUnreadCount((prev) => Math.max(0, prev - 1));
 
-        if (notif.lien_url) {
-            try {
-                router.visit(notif.lien_url);
-            } catch {
+        router.post(route('notifications.redirect', notif.id), {}, {
+            onError: () => {
                 window.location.href = route('dashboard');
-            }
-        }
+            },
+        });
     }, []);
 
     const markAllAsRead = useCallback(() => {
-        fetch(route('notifications.markAllAsRead'), { method: 'PATCH' })
+        fetch(route('notifications.markAllAsRead'), {
+            method: 'PATCH',
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '' },
+        })
             .then((r) => r.json())
             .then((data) => {
                 setUnreadCount(data.unread_count || 0);
@@ -141,9 +129,12 @@ export default function AuthenticatedLayout({ header, children }) {
                 </div>
             )}
 
-            <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
-                <button className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
-                <aside className="fixed inset-y-0 left-0 flex w-80 flex-col border-r border-white/10 bg-slate-950 text-white shadow-2xl">
+            <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? '' : 'pointer-events-none'}`}>
+                <button
+                    className={`fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0'}`}
+                    onClick={() => setSidebarOpen(false)}
+                />
+                <aside className={`fixed inset-y-0 left-0 flex w-80 flex-col border-r border-white/10 bg-slate-950 text-white shadow-2xl transition-transform duration-300 ease-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                     <div className="flex h-20 items-center justify-between border-b border-white/10 px-5">
                         <Link href="/" className="flex items-center gap-3">
                             <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-black text-white shadow-lg shadow-blue-600/30">ED</span>
@@ -207,7 +198,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     )}
                                 </button>
                                 {notifOpen && (
-                                    <div className="absolute right-0 mt-2 w-96 rounded-2xl border border-slate-200 bg-white shadow-soft-lg z-50">
+                                    <div className="absolute right-0 mt-2 w-[min(24rem,calc(100vw-2rem))] rounded-2xl border border-slate-200 bg-white shadow-soft-lg z-50">
                                         <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
                                             <p className="text-sm font-semibold text-slate-800">Notifications {unreadCount > 0 && <span className="ml-1 text-xs font-normal text-slate-400">({unreadCount} non lue{unreadCount > 1 ? 's' : ''})</span>}</p>
                                             <div className="flex items-center gap-2">

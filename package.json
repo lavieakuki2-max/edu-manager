@@ -3,7 +3,10 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "dev:lan": "vite --host 0.0.0.0",
+        "serve": "php artisan serve --host=0.0.0.0 --port=8000",
+        "serve:lan": "php artisan serve --host=0.0.0.0 --port=8000"
     },
     "devDependencies": {
         "@headlessui/react": "^2.0.0",

@@ -13,8 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
+            \App\Http\Middleware\SecurityHeaders::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
         ]);
+
+        $middleware->trustProxies(at: '*');
 
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
