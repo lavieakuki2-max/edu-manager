@@ -42,21 +42,15 @@
 </head>
 <body>
     <div class="page">
-        <div class="letterhead">
-            <div class="rep">République Démocratique du Congo</div>
-            <div class="univ">Université Adventiste de Lukanga</div>
-            <div class="fac">Faculté des Sciences et Technologies</div>
-            <div class="slogan">"Scio ut sim" — Je sais pour être</div>
-            <div class="contact">B.P. 123 Goma, Nord-Kivu, RDC · Email: info@uniluk.ac.cd · Tél: +243 990 000 000</div>
-        </div>
-        <div class="ref-line">Réf. : UNILUK/FAST/{{ date('Y') }}/{{ Str::upper(Str::random(4)) }}</div>
+        @include('pdf.partials.letterhead')
+        <div class="ref-line">Réf. : {{ institution()['sigle'] }}/FAST/{{ date('Y') }}/{{ Str::upper(Str::random(4)) }}</div>
         <div class="title">@yield('title', 'Document officiel')</div>
         @hasSection('subtitle')
             <div class="subtitle">@yield('subtitle')</div>
         @endif
         @yield('content')
         <div class="footer">
-            <strong>UNILUK</strong> — Université Adventiste de Lukanga — Faculté des Sciences et Technologies<br>
+            <strong>{{ institution()['sigle'] }}</strong> — {{ institution()['nom'] }} — {{ institution()['faculte'] }}<br>
             Bureau des Stages et Mémoires — Document officiel généré automatiquement le {{ now()->format('d/m/Y à H:i') }}
         </div>
     </div>

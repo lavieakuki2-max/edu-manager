@@ -3,11 +3,11 @@
 @section("subtitle", "Quitus de Soutenance — " . ($annee ?? "2025-2026"))
 @section("content")
 <div class="content">
-    <p style="text-align:right;font-size:10px;color:#64748b;">Goma, le {{ now()->format("d/m/Y") }}</p>
+    <p style="text-align:right;font-size:10px;color:#64748b;">{{ institution()['ville'] }}, le {{ now()->format("d/m/Y") }}</p>
     <br>
     <p><strong>Objet : Attestation de validation de projet academique</strong></p>
     <br>
-    <p>Je soussigne, <strong>Chef de Division des Stages et Memoires</strong> de l Universite Adventiste de Lukanga (UNILUK), atteste que :</p>
+    <p>Je soussigne, <strong>Chef de Division des Stages et Memoires</strong> de l'{{ institution()['nom'] }} ({{ institution()['sigle'] }}), atteste que :</p>
     <br>
     <dl>
         <dt>Etudiant(e)</dt>
@@ -15,7 +15,7 @@
         <dt>Matricule</dt>
         <dd>{{ $projet->etudiant?->matricule ?? "—" }}</dd>
         <dt>Faculte</dt>
-        <dd>Faculte des Sciences et Technologies</dd>
+        <dd>{{ institution()['faculte'] }}</dd>
         <dt>Annee academique</dt>
         <dd>{{ $annee }}</dd>
         <dt>Projet</dt>

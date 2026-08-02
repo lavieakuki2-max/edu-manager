@@ -65,27 +65,27 @@ class Stage extends Model
 
     public function getStatutCalculeAttribute(): string
     {
-        if (!$this->date_debut) return 'en_attente';
+        if (!$this->date_debut) return 'Approuvé (En attente de démarrage)';
         $now = Carbon::now()->startOfDay();
         $debut = Carbon::parse($this->date_debut);
         $fin = $this->date_fin ? Carbon::parse($this->date_fin) : null;
 
-        if ($now < $debut) return 'en_attente';
-        if ($fin && $now > $fin) return 'termine';
-        return 'en_cours';
+        if ($now < $debut) return 'Approuvé (En attente de démarrage)';
+        if ($fin && $now > $fin) return 'Stage Achevé';
+        return 'En Stage (Actif)';
     }
 
     public function getStatutCourantAttribute(): string
     {
         if (!$this->date_debut || !$this->date_fin || $this->statut_validation !== 'valide') {
-            return 'non_approuve';
+            return 'En attente d\'approbation';
         }
         $now = Carbon::now()->startOfDay();
         $debut = Carbon::parse($this->date_debut);
         $fin = Carbon::parse($this->date_fin);
 
-        if ($now < $debut) return 'approuve_attente';
-        if ($now > $fin) return 'termine';
-        return 'en_cours';
+        if ($now < $debut) return 'Approuvé (En attente de démarrage)';
+        if ($now > $fin) return 'Stage Achevé';
+        return 'En Stage (Actif)';
     }
 }

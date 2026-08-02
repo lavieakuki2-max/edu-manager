@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,7 +45,7 @@ class ProfileController extends Controller
     /**
      * Update the user's profile photo.
      */
-    public function updatePhoto(Request $request): JsonResponse
+    public function updatePhoto(Request $request): RedirectResponse
     {
         try {
             $request->validate([
@@ -63,22 +62,16 @@ class ProfileController extends Controller
 
             $user->update(['photo_profil' => $path]);
 
-            return response()->json([
-                'success' => true,
-                'photo_url' => Storage::url($path),
-            ]);
+            return Redirect::route('profile.edit')->with('success', 'Photo de profil mise à jour.');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Erreur lors du téléchargement de la photo.',
-            ], 500);
+            return Redirect::route('profile.edit')->with('error', 'Erreur lors du téléchargement de la photo.');
         }
     }
 
     /**
      * Delete the user's profile photo.
      */
-    public function deletePhoto(Request $request): JsonResponse
+    public function deletePhoto(Request $request): RedirectResponse
     {
         try {
             $user = $request->user();
@@ -88,14 +81,9 @@ class ProfileController extends Controller
                 $user->update(['photo_profil' => null]);
             }
 
-            return response()->json([
-                'success' => true,
-            ]);
+            return Redirect::route('profile.edit')->with('success', 'Photo de profil supprimée.');
         } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Erreur lors de la suppression de la photo.',
-            ], 500);
+            return Redirect::route('profile.edit')->with('error', 'Erreur lors de la suppression de la photo.');
         }
     }
 

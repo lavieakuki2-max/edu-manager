@@ -22,7 +22,7 @@ class SoutenanceController extends Controller
             'membre.user',
         ])->orderBy('date_soutenance', 'desc')->get();
 
-        $projetsPret = ProjetAcademique::where('statut_actuel', 'Prêt pour Soutenance')
+        $projetsPret = ProjetAcademique::where('statut_actuel', 'Quitus accordé')
             ->with(['etudiant.user', 'enseignant.user'])
             ->get();
 
@@ -48,6 +48,10 @@ class SoutenanceController extends Controller
                 'rapporteur_id' => 'nullable|exists:enseignants,id',
                 'membre_id' => 'nullable|exists:enseignants,id',
             ]);
+            $projet = ProjetAcademique::findOrFail($validated['projet_id']);
+            if ($projet->statut_actuel !== 'Quitus accordé') {
+                return back()->with('error', 'Le projet doit obtenir un Quitus accordé avant la planification.');
+            }
 
             $validated['statut'] = 'planifiee';
 
@@ -86,7 +90,7 @@ class SoutenanceController extends Controller
                     $validated['mention'] = Soutenance::calculerMention((float) $validated['note_finale']);
                 }
                 if ($soutenance->projet) {
-                    $soutenance->projet->update(['statut_actuel' => 'Validé']);
+                    $soutenance->projet->update(['statut_actuel' => 'Soutenu']);
                 }
             }
 
@@ -143,7 +147,7 @@ class SoutenanceController extends Controller
                     'statut' => 'realisee',
                 ]);
                 if ($soutenance->projet) {
-                    $soutenance->projet->update(['statut_actuel' => 'Validé']);
+                    $soutenance->projet->update(['statut_actuel' => 'Soutenu']);
                 }
                 $soutenance->load(['projet.etudiant.user', 'projet.enseignant.user']);
                 NotificationService::notifierResultatSoutenance($soutenance);

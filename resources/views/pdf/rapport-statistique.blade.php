@@ -38,7 +38,7 @@
 <body>
     <div class="page">
         <div class="header">
-            <div class="university">Universite Adventiste de Lukanga</div>
+            <div class="university">{{ institution()['nom'] }}</div>
             <div class="title">Rapport Statistique Global</div>
             <div class="subtitle">Annee academique {{ $annee }} — Genere le {{ now()->format('d/m/Y à H:i') }}</div>
         </div>
@@ -159,7 +159,7 @@
         </table>
 
         <div class="footer">
-            UNILUK — Universite Adventiste de Lukanga — Bureau des Stages et Memoires — Document officiel genere automatiquement
+            {{ institution()['sigle'] }} — {{ institution()['nom'] }} — Bureau des Stages et Memoires — Document officiel genere automatiquement
         </div>
     </div>
 </body>
