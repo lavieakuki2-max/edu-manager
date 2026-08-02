@@ -9,6 +9,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
     const flash = usePage().props.flash;
+    const settings = usePage().props.settings || {};
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [notifOpen, setNotifOpen] = useState(false);
     const [notifications, setNotifications] = useState([]);
@@ -79,7 +80,7 @@ export default function AuthenticatedLayout({ header, children }) {
             { label: 'Stages', href: route('admin.stages.index'), active: route().current('admin.stages.*'), icon: Clock },
             { label: 'Entreprises', href: route('admin.entreprises.index'), active: route().current('admin.entreprises.*'), icon: Building2 },
             { label: 'Rapports', href: route('admin.rapports'), active: route().current('admin.rapports'), icon: FileText },
-            { label: 'Parametres', href: route('profile.edit'), active: route().current('profile.*'), icon: Settings },
+            { label: 'Paramètres', href: route('admin.parametres.index'), active: route().current('admin.parametres.*'), icon: Settings },
         );
     } else if (user.role === 'enseignant') {
         navItems.push(
@@ -137,10 +138,10 @@ export default function AuthenticatedLayout({ header, children }) {
                 <aside className={`fixed inset-y-0 left-0 flex w-80 flex-col border-r border-white/10 bg-slate-950 text-white shadow-2xl transition-transform duration-300 ease-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                     <div className="flex h-20 items-center justify-between border-b border-white/10 px-5">
                         <Link href="/" className="flex items-center gap-3">
-                            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-black text-white shadow-lg shadow-blue-600/30">ED</span>
+                            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-black text-white shadow-lg shadow-blue-600/30">{(settings.sigle || 'ED').slice(0, 2).toUpperCase()}</span>
                             <div>
                                 <div className="text-lg font-semibold leading-5">EduManager</div>
-                                <div className="text-xs text-slate-400">UNILUK — Plateforme academique</div>
+                                <div className="text-xs text-slate-400">{settings.sigle || 'UNILUK'} — Plateforme academique</div>
                             </div>
                         </Link>
                         <button onClick={() => setSidebarOpen(false)} className="rounded-xl p-2 text-slate-400 hover:bg-white/10"><X size={20} /></button>
@@ -161,10 +162,10 @@ export default function AuthenticatedLayout({ header, children }) {
             <aside className="fixed inset-y-0 left-0 hidden w-80 flex-col border-r border-white/10 bg-slate-950 text-white lg:flex">
                 <div className="flex h-20 items-center border-b border-white/10 px-6">
                     <Link href="/" className="flex items-center gap-3">
-                        <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-black text-white shadow-lg shadow-blue-600/30">ED</span>
+                        <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-black text-white shadow-lg shadow-blue-600/30">{(settings.sigle || 'ED').slice(0, 2).toUpperCase()}</span>
                         <div>
                             <div className="text-lg font-semibold leading-5">EduManager</div>
-                            <div className="text-xs text-slate-400">UNILUK — Plateforme academique</div>
+                            <div className="text-xs text-slate-400">{settings.sigle || 'UNILUK'} — Plateforme academique</div>
                         </div>
                     </Link>
                 </div>
@@ -252,6 +253,9 @@ export default function AuthenticatedLayout({ header, children }) {
                     </div>
                 </header>
                 <main className="edumanager-shell py-6 sm:py-8">{children}</main>
+                <footer className="border-t border-slate-200 bg-white px-4 py-4 text-center text-xs text-slate-400 sm:px-6">
+                    <p>{settings.nom || 'Université'} {settings.sigle ? `— ${settings.sigle}` : ''} · Année académique {settings.annee_academique || '—'} · EduManager</p>
+                </footer>
             </div>
         </div>
     );

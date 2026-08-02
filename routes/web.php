@@ -1,6 +1,7 @@
 ﻿<?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\ParametresController;
 use App\Http\Controllers\Admin\ProjetController as AdminProjetController;
 use App\Http\Controllers\Admin\RapportController;
 use App\Http\Controllers\Admin\StageSuiviController as AdminStageSuiviController;
@@ -91,6 +92,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/stages', [AdminStageSuiviController::class, 'index'])->name('admin.stages.index');
         Route::get('/admin/stages/{stage}', [AdminStageSuiviController::class, 'show'])->name('admin.stages.show');
         Route::patch('/admin/stages/{stage}/statut', [AdminStageSuiviController::class, 'updateStatut'])->name('admin.stages.statut');
+
+        Route::get('/admin/parametres', [ParametresController::class, 'index'])->name('admin.parametres.index');
+        Route::patch('/admin/parametres', [ParametresController::class, 'update'])->name('admin.parametres.update');
     });
 
     Route::middleware('role:enseignant')->group(function () {
