@@ -19,6 +19,41 @@ class NotificationService
         ]);
     }
 
+    public static function notifierInscriptionEnAttente(User $user): void
+    {
+        $roleLabel = $user->role === 'enseignant' ? 'enseignant' : 'étudiant';
+        $admins = User::where('role', 'admin')->get();
+
+        foreach ($admins as $admin) {
+            self::creer(
+                $admin,
+                'Nouveau compte en attente',
+                "Un nouveau compte {$roleLabel} ({$user->prenom} {$user->nom}, {$user->email}) attend votre confirmation.",
+                route('admin.users.index')
+            );
+        }
+    }
+
+    public static function notifierCompteConfirme(User $user): void
+    {
+        self::creer(
+            $user,
+            'Compte confirmé',
+            'Votre compte a été confirmé par l\'administrateur. Vous pouvez maintenant vous connecter.',
+            route('login')
+        );
+    }
+
+    public static function notifierCompteRejete(User $user, string $motif): void
+    {
+        self::creer(
+            $user,
+            'Demande de compte rejetée',
+            "Votre demande de compte a été rejetée. Motif : {$motif}",
+            null
+        );
+    }
+
     public static function notifierSoumissionSujet(ProjetAcademique $projet): void
     {
         $etudiant = $projet->etudiant->user;

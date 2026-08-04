@@ -4,7 +4,7 @@ import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import {
     UserPlus, Search, Eye, Edit, Trash2, Shield, GraduationCap,
-    BookOpen, Users as UsersIcon, X, Check, Mail, Phone, MapPin, Briefcase, Calendar, EyeOff,
+    BookOpen, Users as UsersIcon, X, Check, Mail, Phone, MapPin, Briefcase, Calendar, EyeOff, Clock, Ban,
 } from 'lucide-react';
 
 const roleColors = {
@@ -25,6 +25,18 @@ const roleLabels = {
     etudiant: 'Etudiant',
 };
 
+const statutColors = {
+    actif: 'bg-emerald-50 text-emerald-700',
+    en_attente: 'bg-amber-50 text-amber-700',
+    rejete: 'bg-red-50 text-red-700',
+};
+
+const statutLabels = {
+    actif: 'Actif',
+    en_attente: 'En attente',
+    rejete: 'Rejeté',
+};
+
 export default function Users({ users = [], stats = {} }) {
     const { flash } = usePage().props;
     const [activeTab, setActiveTab] = useState('all');
@@ -33,6 +45,7 @@ export default function Users({ users = [], stats = {} }) {
     const [showEdit, setShowEdit] = useState(null);
     const [showView, setShowView] = useState(null);
     const [showDelete, setShowDelete] = useState(null);
+    const [showReject, setShowReject] = useState(null);
 
     const createForm = useForm({
         prenom: '',
@@ -78,6 +91,30 @@ export default function Users({ users = [], stats = {} }) {
     const handleDelete = (user) => {
         router.delete(route('admin.users.destroy', user.id), {
             onSuccess: () => setShowDelete(null),
+        });
+    };
+
+    const handleConfirm = (user) => {
+        router.post(route('admin.users.confirm', user.id), {}, {
+            onSuccess: () => {},
+        });
+    };
+
+    const rejectForm = useForm({ motif_rejet: '' });
+
+    const openReject = (user) => {
+        rejectForm.reset();
+        setShowReject(user);
+    };
+
+    const submitReject = (e) => {
+        e.preventDefault();
+        if (!showReject) return;
+        rejectForm.post(route('admin.users.reject', showReject.id), {
+            onSuccess: () => {
+                setShowReject(null);
+                rejectForm.reset();
+            },
         });
     };
 
@@ -161,6 +198,64 @@ export default function Users({ users = [], stats = {} }) {
                     })}
                 </div>
 
+                {users.some((u) => u.statut === 'en_attente') && (
+                    <section className="panel-card overflow-hidden border-2 border-amber-200">
+                        <div className="flex items-center justify-between border-b border-amber-100 bg-amber-50/60 p-5">
+                            <div>
+                                <h2 className="text-base font-semibold text-slate-950">
+                                    Demandes de comptes en attente
+                                    <span className="ml-2 rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold text-white">
+                                        {users.filter((u) => u.statut === 'en_attente').length}
+                                    </span>
+                                </h2>
+                                <p className="mt-1 text-sm text-slate-500">
+                                    Confirmez ou rejetez les comptes créés via l'inscription en ligne.
+                                </p>
+                            </div>
+                            <Clock size={18} className="text-amber-500" />
+                        </div>
+                        <div className="grid gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3">
+                            {users.filter((u) => u.statut === 'en_attente').map((user) => (
+                                <div key={user.id} className="rounded-2xl border border-amber-200 bg-amber-50/30 p-4">
+                                    <div className="flex items-center gap-3">
+                                        <UserAvatar user={user} size="lg" />
+                                        <div className="min-w-0">
+                                            <p className="font-semibold text-slate-950 truncate">{user.prenom} {user.nom}</p>
+                                            <p className="text-sm text-slate-500 truncate">{user.email}</p>
+                                        </div>
+                                    </div>
+                                    <div className="mt-3 flex flex-wrap gap-1.5">
+                                        <span className={`status-pill text-xs ${roleColors[user.role] || 'bg-slate-100 text-slate-600'}`}>
+                                            {roleLabels[user.role] || user.role}
+                                        </span>
+                                        <span className="status-pill text-xs bg-amber-50 text-amber-700">En attente</span>
+                                    </div>
+                                    {user.role === 'etudiant' && user.etudiant && (
+                                        <div className="mt-3 space-y-1 text-xs text-slate-500">
+                                            <p>Matricule : {user.etudiant.matricule}</p>
+                                            <p>Classe : {user.etudiant.classe} · Filière : {user.etudiant.filiere}</p>
+                                        </div>
+                                    )}
+                                    <div className="mt-4 flex items-center gap-2">
+                                        <button
+                                            onClick={() => handleConfirm(user)}
+                                            className="soft-button flex-1 bg-emerald-600 text-white hover:bg-emerald-700 text-xs"
+                                        >
+                                            <Check size={14} /> Confirmer
+                                        </button>
+                                        <button
+                                            onClick={() => openReject(user)}
+                                            className="soft-button flex-1 bg-red-600 text-white hover:bg-red-700 text-xs"
+                                        >
+                                            <Ban size={14} /> Rejeter
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
                 <div className="flex flex-wrap gap-2">
                     {tabs.map((tab) => (
                         <button
@@ -213,8 +308,8 @@ export default function Users({ users = [], stats = {} }) {
                                                 <RoleIcon size={12} />
                                                 {roleLabels[user.role] || user.role}
                                             </span>
-                                            <span className={`status-pill text-xs ${user.statut === 'inactif' ? 'bg-red-50 text-red-700' : 'bg-emerald-50 text-emerald-700'}`}>
-                                                {user.statut === 'inactif' ? 'Inactif' : 'Actif'}
+                                            <span className={`status-pill text-xs ${statutColors[user.statut] || 'bg-emerald-50 text-emerald-700'}`}>
+                                                {statutLabels[user.statut] || 'Actif'}
                                             </span>
                                         </div>
 
@@ -460,7 +555,8 @@ export default function Users({ users = [], stats = {} }) {
                                 <label className="mb-1.5 block text-sm font-semibold text-slate-700">Statut</label>
                                 <select className="soft-input" value={editForm.data.statut} onChange={(e) => editForm.setData('statut', e.target.value)}>
                                     <option value="actif">Actif</option>
-                                    <option value="inactif">Inactif</option>
+                                    <option value="en_attente">En attente</option>
+                                    <option value="rejete">Rejeté</option>
                                 </select>
                             </div>
 
@@ -510,8 +606,9 @@ export default function Users({ users = [], stats = {} }) {
                                     <span className="text-slate-600">{roleLabels[showView.role] || showView.role}</span>
                                 </div>
                                 <div className="flex items-center gap-3 text-sm">
-                                    <Check size={16} className={showView.statut === 'inactif' ? 'text-red-400' : 'text-emerald-400'} />
-                                    <span className="text-slate-600">{showView.statut === 'inactif' ? 'Inactif' : 'Actif'}</span>
+                                    <span className={`status-pill text-xs ${statutColors[showView.statut] || 'bg-emerald-50 text-emerald-700'}`}>
+                                        {statutLabels[showView.statut] || 'Actif'}
+                                    </span>
                                 </div>
                             </div>
 
@@ -564,6 +661,48 @@ export default function Users({ users = [], stats = {} }) {
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {showReject && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <button className="fixed inset-0 bg-slate-950/50 backdrop-blur-sm" onClick={() => setShowReject(null)} />
+                    <div className="relative w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl">
+                        <div className="mb-6 flex items-center justify-between">
+                            <h2 className="text-lg font-semibold text-slate-950">Rejeter la demande</h2>
+                            <button onClick={() => setShowReject(null)} className="rounded-xl p-2 text-slate-400 hover:bg-slate-100">
+                                <X size={18} />
+                            </button>
+                        </div>
+
+                        <p className="text-sm text-slate-600">
+                            Vous allez rejeter la demande de <span className="font-semibold text-slate-950">{showReject.prenom} {showReject.nom}</span>.
+                            Le motif sera notifié à l'utilisateur.
+                        </p>
+
+                        <form onSubmit={submitReject} className="mt-4 space-y-4">
+                            <div>
+                                <label className="mb-1.5 block text-sm font-semibold text-slate-700">Motif du rejet</label>
+                                <textarea
+                                    className="soft-input min-h-[100px] w-full"
+                                    placeholder="Ex : matricule introuvable dans les registres de l'université"
+                                    value={rejectForm.data.motif_rejet}
+                                    onChange={(e) => rejectForm.setData('motif_rejet', e.target.value)}
+                                    required
+                                />
+                                {rejectForm.errors.motif_rejet && <p className="mt-1 text-xs text-red-600">{rejectForm.errors.motif_rejet}</p>}
+                            </div>
+
+                            <div className="flex justify-end gap-3 pt-2">
+                                <button type="button" onClick={() => setShowReject(null)} className="soft-button soft-button-secondary">
+                                    Annuler
+                                </button>
+                                <button type="submit" disabled={rejectForm.processing} className="soft-button bg-red-600 text-white hover:bg-red-700 shadow-sm disabled:opacity-50">
+                                    <Ban size={16} /> Rejeter
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}

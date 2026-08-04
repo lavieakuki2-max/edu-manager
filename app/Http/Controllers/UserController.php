@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Etudiant;
 use App\Models\Enseignant;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -39,6 +40,7 @@ class UserController extends Controller
                 'etudiants' => User::where('role', 'etudiant')->count(),
                 'enseignants' => User::where('role', 'enseignant')->count(),
                 'admins' => User::where('role', 'admin')->count(),
+                'en_attente' => User::where('statut', 'en_attente')->count(),
             ],
         ]);
     }
@@ -94,6 +96,8 @@ class UserController extends Controller
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
+            'statut' => 'nullable|in:actif,en_attente,rejete',
+            'motif_rejet' => 'nullable|string|max:500',
         ]);
 
         $user->update($validated);
@@ -106,6 +110,30 @@ class UserController extends Controller
         }
 
         return back()->with('success', 'Utilisateur mis à jour.');
+    }
+
+    // Confirm a pending account
+    public function confirm(User $user)
+    {
+        $user->update(['statut' => 'actif', 'motif_rejet' => null]);
+
+        NotificationService::notifierCompteConfirme($user);
+
+        return back()->with('success', "Le compte de {$user->prenom} {$user->nom} a été confirmé.");
+    }
+
+    // Reject a pending account
+    public function reject(Request $request, User $user)
+    {
+        $request->validate([
+            'motif_rejet' => 'required|string|max:500',
+        ]);
+
+        $user->update(['statut' => 'rejete', 'motif_rejet' => $request->motif_rejet]);
+
+        NotificationService::notifierCompteRejete($user, $request->motif_rejet);
+
+        return back()->with('success', "La demande de {$user->prenom} {$user->nom} a été rejetée.");
     }
 
     // Delete user

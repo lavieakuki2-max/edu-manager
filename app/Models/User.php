@@ -26,6 +26,7 @@ class User extends Authenticatable
         'photo_profil',
         'statut',
         'motif_rejet',
+        'email_verified_at',
     ];
 
     protected $appends = ['photo_url'];

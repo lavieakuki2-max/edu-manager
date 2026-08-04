@@ -60,6 +60,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/utilisateurs', [UserController::class, 'index'])->name('admin.users.index');
         Route::post('/admin/utilisateurs', [UserController::class, 'store'])->name('admin.users.store');
         Route::patch('/admin/utilisateurs/{user}', [UserController::class, 'update'])->name('admin.users.update');
+        Route::post('/admin/utilisateurs/{user}/confirmer', [UserController::class, 'confirm'])->name('admin.users.confirm');
+        Route::post('/admin/utilisateurs/{user}/rejeter', [UserController::class, 'reject'])->name('admin.users.reject');
         Route::delete('/admin/utilisateurs/{user}', [UserController::class, 'destroy'])->name('admin.users.delete');
 
         Route::get('/admin/entreprises', [EntrepriseController::class, 'index'])->name('admin.entreprises.index');

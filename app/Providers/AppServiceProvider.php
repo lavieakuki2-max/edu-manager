@@ -22,8 +22,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // 2. FORCE LE HTTPS EN PRODUCTION (Indispensable pour Render + Inertia)
-        if ($this->app->environment('production') || config('app.env') === 'production') {
+        // Force le HTTPS en production UNIQUEMENT hors localhost.
+        // En local (127.0.0.1/localhost) on garde http:// sinon le navigateur
+        // tente une connexion TLS inexistante sur php artisan serve -> écran blanc.
+        $request = $this->app->request;
+        $host = $request?->getHost();
+        $isLocal = in_array($host, ['127.0.0.1', 'localhost', '::1'], true);
+        if ($this->app->environment('production') && !$isLocal) {
             URL::forceScheme('https');
         }
 

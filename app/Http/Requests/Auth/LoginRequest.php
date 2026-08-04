@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -41,6 +42,21 @@ class LoginRequest extends FormRequest
     public function authenticate(): void
     {
         $this->ensureIsNotRateLimited();
+
+        $user = User::where('email', $this->string('email'))->first();
+
+        if ($user && $user->statut === 'en_attente') {
+            throw ValidationException::withMessages([
+                'email' => 'Votre compte est en attente de validation par l\'administrateur. Veuillez patienter.',
+            ]);
+        }
+
+        if ($user && $user->statut === 'rejete') {
+            $motif = $user->motif_rejet ? ' Motif : '.$user->motif_rejet : '';
+            throw ValidationException::withMessages([
+                'email' => 'Votre demande de compte a été rejetée.'.$motif,
+            ]);
+        }
 
         if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());

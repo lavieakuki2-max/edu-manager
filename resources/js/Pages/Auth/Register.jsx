@@ -35,6 +35,9 @@ export default function Register() {
                 <p className="text-sm font-semibold uppercase tracking-[.18em] text-blue-400">Nouveau compte</p>
                 <h1 className="mt-2 text-3xl font-bold tracking-tight text-white">Créez votre espace</h1>
                 <p className="mt-2 text-sm text-slate-300">Rejoignez la plateforme UNILUK.</p>
+                <p className="mt-3 rounded-xl border border-amber-400/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-300">
+                    Après votre inscription, votre compte doit être <strong>confirmé par l'administrateur</strong> avant de pouvoir vous connecter.
+                </p>
             </div>
 
             <form onSubmit={submit} className="space-y-4">
