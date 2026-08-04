@@ -22,16 +22,17 @@ WORKDIR /var/www
 
 COPY . .
 
-# Installation des paquets et compilation
+# Installation des paquets et compilation des assets
 RUN composer install --no-dev --optimize-autoloader
 RUN npm install
 RUN npm run build
 
-# Creation du dossier build et attribution des droits
+# Création du dossier build et attribution des droits
 RUN mkdir -p /var/www/public/build
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public
 RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache /var/www/public
 
 EXPOSE 8000
 
-CMD php artisan config:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
+# CORRECTION : Nettoyage complet de tous les caches (Inertia + Laravel) au démarrage
+CMD php artisan optimize:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000

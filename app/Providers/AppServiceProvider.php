@@ -9,6 +9,7 @@ use App\Policies\CommentairePolicy;
 use App\Policies\DocumentPolicy;
 use App\Policies\ProjetAcademiquePolicy;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\URL; // <-- 1. IMPORT AJOUTÉ
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,6 +22,11 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // 2. FORCE LE HTTPS EN PRODUCTION (Indispensable pour Render + Inertia)
+        if ($this->app->environment('production') || config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
+
         Vite::prefetch(concurrency: 3);
 
         Gate::policy(ProjetAcademique::class, ProjetAcademiquePolicy::class);

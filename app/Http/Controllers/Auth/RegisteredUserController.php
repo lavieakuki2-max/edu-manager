@@ -6,14 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Enseignant;
 use App\Models\Etudiant;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
+use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -45,6 +42,8 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'statut' => 'en_attente',
+            'email_verified_at' => now(),
         ]);
 
         if ($request->role === 'etudiant') {
@@ -62,9 +61,11 @@ class RegisteredUserController extends Controller
             ]);
         }
 
-        event(new Registered($user));
-        Auth::login($user);
+        NotificationService::notifierInscriptionEnAttente($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect()->route('login')->with(
+            'status',
+            'Votre compte a été créé. Il doit être confirmé par l\'administrateur avant de pouvoir vous connecter.'
+        );
     }
 }
