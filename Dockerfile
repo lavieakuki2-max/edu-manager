@@ -20,19 +20,20 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
+# 1. Copier d'abord le code
 COPY . .
 
-# Installation des paquets et compilation des assets
+# 2. Installer composer sans dev
 RUN composer install --no-dev --optimize-autoloader
+
+# 3. Installer npm et build les assets
 RUN npm install
 RUN npm run build
 
-# Création du dossier build et attribution des droits
-RUN mkdir -p /var/www/public/build
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache /var/www/public
-RUN chmod -R 775 /var/www/storage /var/www/bootstrap/cache /var/www/public
+# 4. S'ASSURER QUE LE DOSSIER BUILD A TOUTES LES PERMISSIONS (Fix MIME / 404)
+RUN chmod -R 755 /var/www/public
 
 EXPOSE 8000
 
-# CORRECTION : Nettoyage complet de tous les caches (Inertia + Laravel) au démarrage
-CMD php artisan optimize:clear && php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=8000
+# 5. Nettoyer le cache au démarrage et lancer le serveur
+CMD php artisan optimize:clear && php artisan serve --host=0.0.0.0 --port=8000
