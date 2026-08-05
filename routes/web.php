@@ -62,7 +62,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/admin/utilisateurs/{user}', [UserController::class, 'update'])->name('admin.users.update');
         Route::post('/admin/utilisateurs/{user}/confirmer', [UserController::class, 'confirm'])->name('admin.users.confirm');
         Route::post('/admin/utilisateurs/{user}/rejeter', [UserController::class, 'reject'])->name('admin.users.reject');
-        Route::delete('/admin/utilisateurs/{user}', [UserController::class, 'destroy'])->name('admin.users.delete');
+        Route::delete('/admin/utilisateurs/{user}', [UserController::class, 'destroy'])->name('admin.users.destroy');
 
         Route::get('/admin/entreprises', [EntrepriseController::class, 'index'])->name('admin.entreprises.index');
         Route::get('/admin/entreprises/export', [EntrepriseController::class, 'export'])->name('admin.entreprises.export');
