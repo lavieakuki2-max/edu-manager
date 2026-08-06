@@ -11,7 +11,7 @@ RUN apt-get update && apt-get install -y \
     unzip \
     libpq-dev
 
-RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
     && apt-get install -y nodejs
 
 RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
@@ -26,8 +26,8 @@ COPY . .
 # 2. Installer composer sans dev
 RUN composer install --no-dev --optimize-autoloader
 
-# 3. Installer npm et build les assets
-RUN npm install
+# 3. Installer npm (ci = build déterministe via le lockfile) et builder les assets
+RUN npm ci
 RUN npm run build
 
 # 4. S'ASSURER QUE LE DOSSIER BUILD A TOUTES LES PERMISSIONS (Fix MIME / 404)
