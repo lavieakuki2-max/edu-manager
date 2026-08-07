@@ -42,8 +42,10 @@ export default function Dashboard({ role, userName, stats, projets, documentsRec
             <Head title="Dashboard" />
 
             <div className="space-y-6">
-                <section className="glass-card overflow-hidden p-6 text-white">
-                    <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr] lg:items-center">
+                <section className="glass-card relative overflow-hidden p-6 text-white">
+                    <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
+                    <div className="pointer-events-none absolute -bottom-32 left-1/3 h-80 w-80 rounded-full bg-indigo-400/15 blur-3xl" />
+                    <div className="relative grid gap-6 lg:grid-cols-[1.6fr_1fr] lg:items-center">
                         <div className="space-y-4">
                             <span className="status-pill bg-white/10 text-white/90">
                                 {roleGreeting[role] || 'EduManager'} - UNILUK
@@ -95,13 +97,13 @@ export default function Dashboard({ role, userName, stats, projets, documentsRec
                     {cards.map((card) => {
                         const Icon = card.icon;
                         return (
-                            <div key={card.label} className="panel-card p-5">
+                            <div key={card.label} className="panel-card group p-5">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <p className="panel-title">{card.label}</p>
                                         <p className="mt-3 text-3xl font-semibold text-slate-950">{card.value ?? 0}</p>
                                     </div>
-                                    <div className={`rounded-xl ${card.bg} p-3 ${card.color}`}>
+                                    <div className={`rounded-xl ${card.bg} p-3 ${card.color} transition-transform duration-200 group-hover:scale-110`}>
                                         <Icon size={22} />
                                     </div>
                                 </div>

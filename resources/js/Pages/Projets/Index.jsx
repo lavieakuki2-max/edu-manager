@@ -157,20 +157,20 @@ export default function Index({ projets, enseignants, entreprises, canCreate, ca
                                         </div>
                                     </div>
 
-                                    <div className="mt-5 grid gap-1.5 sm:grid-cols-6">
-                                        {steps.map((step, idx) => (
-                                            <div
-                                                key={step}
-                                                className={`rounded-xl px-3 py-2 text-center text-xs font-semibold transition ${
-                                                    idx <= activeIdx
-                                                        ? 'bg-emerald-50 text-emerald-700'
-                                                        : 'bg-slate-100 text-slate-400'
-                                                }`}
-                                            >
-                                                {step}
-                                            </div>
-                                        ))}
-                                    </div>
+                                <div className="mt-5 grid gap-1.5 sm:grid-cols-3 lg:grid-cols-6">
+                                    {steps.map((step, idx) => (
+                                        <div
+                                            key={step}
+                                            className={`rounded-xl px-3 py-2 text-center text-xs font-semibold transition ${
+                                                idx <= activeIdx
+                                                    ? 'bg-emerald-50 text-emerald-700'
+                                                    : 'bg-slate-100 text-slate-400'
+                                            }`}
+                                        >
+                                            {step}
+                                        </div>
+                                    ))}
+                                </div>
 
                                     <div className="mt-4 flex items-center gap-4 text-xs text-slate-400">
                                         {projet.documents?.length > 0 && (

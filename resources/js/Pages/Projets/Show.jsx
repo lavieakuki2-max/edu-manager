@@ -222,12 +222,12 @@ export default function Show({ projet, canAdmin, canComment = false, canUpload =
                     </div>
                 </section>
 
-                <div className="flex gap-2 border-b border-slate-200">
+                <div className="flex gap-2 overflow-x-auto border-b border-slate-200 scrollbar-none">
                     {tabs.map((tab) => (
                         <button
                             key={tab.key}
                             onClick={() => setActiveTab(tab.key)}
-                            className={`px-4 py-3 text-sm font-semibold transition border-b-2 ${
+                            className={`whitespace-nowrap px-4 py-3 text-sm font-semibold transition border-b-2 ${
                                 activeTab === tab.key
                                     ? 'border-slate-950 text-slate-950'
                                     : 'border-transparent text-slate-500 hover:text-slate-700'

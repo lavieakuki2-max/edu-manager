@@ -698,7 +698,7 @@ export default function Users({ users = [], stats = {} }) {
                                 <button type="button" onClick={() => setShowReject(null)} className="soft-button soft-button-secondary">
                                     Annuler
                                 </button>
-                                <button type="submit" disabled={rejectForm.processing} className="soft-button bg-red-600 text-white hover:bg-red-700 shadow-sm disabled:opacity-50">
+                                <button type="submit" disabled={rejectForm.processing} className="soft-button soft-button-danger disabled:opacity-50">
                                     <Ban size={16} /> Rejeter
                                 </button>
                             </div>
@@ -727,7 +727,7 @@ export default function Users({ users = [], stats = {} }) {
                             <button onClick={() => setShowDelete(null)} className="soft-button soft-button-secondary">
                                 Annuler
                             </button>
-                            <button onClick={() => handleDelete(showDelete)} className="soft-button bg-red-600 text-white hover:bg-red-700 shadow-sm">
+                            <button onClick={() => handleDelete(showDelete)} className="soft-button soft-button-danger">
                                 <Trash2 size={16} /> Supprimer
                             </button>
                         </div>

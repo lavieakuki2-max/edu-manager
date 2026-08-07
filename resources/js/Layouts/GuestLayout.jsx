@@ -23,15 +23,17 @@ export default function GuestLayout({ children }) {
                     </div>
                 </aside>
 
-                <main className="flex items-center justify-center px-6 py-12 sm:px-10">
-                    <div className="w-full max-w-md">
+                <main className="relative flex items-center justify-center px-6 py-12 sm:px-10">
+                    <div className="pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl" />
+                    <div className="pointer-events-none absolute -left-24 bottom-10 h-72 w-72 rounded-full bg-indigo-500/10 blur-3xl" />
+                    <div className="relative w-full max-w-md">
                         <Link href="/" className="mb-10 flex items-center gap-3 text-xl font-bold lg:hidden">
                             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white">
                                 <GraduationCap size={21} />
                             </span>
                             EduManager
                         </Link>
-                        <div className="rounded-2xl border border-white/10 bg-white/5 p-7 backdrop-blur-xl sm:p-9">
+                        <div className="rounded-2xl border border-white/10 bg-white/5 p-7 shadow-2xl backdrop-blur-xl sm:p-9">
                             {children}
                         </div>
                     </div>

@@ -108,14 +108,14 @@ export default function AuthenticatedLayout({ header, children }) {
     const roleAccent = user.role === 'admin' ? 'from-amber-400 to-orange-500' : user.role === 'enseignant' ? 'from-blue-400 to-indigo-500' : 'from-emerald-400 to-emerald-500';
 
     const Navigation = ({ mobile = false }) => (
-        <nav className={`flex-1 space-y-1 ${mobile ? 'px-3 py-5' : 'px-4 py-6'}`}>
+        <nav className={`min-h-0 flex-1 space-y-1 overflow-y-auto scrollbar-none ${mobile ? 'px-3 py-5' : 'px-4 py-6'}`}>
             {navItems.map((item) => {
                 const Icon = item.icon;
                 const Component = mobile ? ResponsiveNavLink : NavLink;
                 return (
                     <Component key={item.label} href={item.href} active={item.active} className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-all duration-200">
                         <Icon size={18} className="shrink-0" />
-                        {item.label}
+                        <span className="truncate">{item.label}</span>
                     </Component>
                 );
             })}
@@ -123,9 +123,9 @@ export default function AuthenticatedLayout({ header, children }) {
     );
 
     return (
-        <div className="min-h-screen bg-[#F8FAFC] text-slate-700">
+        <div className="min-h-screen overflow-x-hidden bg-[#F8FAFC] text-slate-700">
             {toast && (
-                <div className={`fixed top-4 right-4 z-[100] rounded-xl px-5 py-3 text-sm font-medium shadow-lg transition-all duration-300 ${toast.type === 'success' ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
+                <div className={`fixed inset-x-4 top-4 z-[100] rounded-xl px-5 py-3 text-center text-sm font-medium shadow-lg transition-all duration-300 sm:inset-x-auto sm:right-4 sm:left-auto sm:text-left ${toast.type === 'success' ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
                     {toast.message}
                 </div>
             )}
@@ -135,8 +135,8 @@ export default function AuthenticatedLayout({ header, children }) {
                     className={`fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0'}`}
                     onClick={() => setSidebarOpen(false)}
                 />
-                <aside className={`fixed inset-y-0 left-0 flex w-80 flex-col border-r border-white/10 bg-slate-950 text-white shadow-2xl transition-transform duration-300 ease-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                    <div className="flex h-20 items-center justify-between border-b border-white/10 px-5">
+                <aside className={`fixed inset-y-0 left-0 flex w-80 max-w-[85vw] flex-col overflow-hidden border-r border-white/10 bg-slate-950 text-white shadow-2xl transition-transform duration-300 ease-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+                    <div className="flex h-20 shrink-0 items-center justify-between border-b border-white/10 px-5">
                         <Link href="/" className="flex items-center gap-3">
                             <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-black text-white shadow-lg shadow-blue-600/30">{(settings.sigle || 'ED').slice(0, 2).toUpperCase()}</span>
                             <div>
@@ -147,7 +147,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         <button onClick={() => setSidebarOpen(false)} className="rounded-xl p-2 text-slate-400 hover:bg-white/10"><X size={20} /></button>
                     </div>
                     <Navigation mobile />
-                    <div className="mx-4 mb-5 rounded-2xl border border-white/10 bg-white/5 p-4">
+                    <div className="shrink-0 mx-4 mb-5 rounded-2xl border border-white/10 bg-white/5 p-4">
                         <div className="flex items-center gap-3">
                             <div className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${roleAccent} text-white`}><Shield size={16} /></div>
                             <div>
@@ -159,8 +159,8 @@ export default function AuthenticatedLayout({ header, children }) {
                 </aside>
             </div>
 
-            <aside className="fixed inset-y-0 left-0 hidden w-80 flex-col border-r border-white/10 bg-slate-950 text-white lg:flex">
-                <div className="flex h-20 items-center border-b border-white/10 px-6">
+            <aside className="fixed inset-y-0 left-0 hidden w-80 flex-col overflow-hidden border-r border-white/10 bg-slate-950 text-white lg:flex">
+                <div className="flex h-20 shrink-0 items-center border-b border-white/10 px-6">
                     <Link href="/" className="flex items-center gap-3">
                         <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-sm font-black text-white shadow-lg shadow-blue-600/30">{(settings.sigle || 'ED').slice(0, 2).toUpperCase()}</span>
                         <div>
@@ -170,7 +170,7 @@ export default function AuthenticatedLayout({ header, children }) {
                     </Link>
                 </div>
                 <Navigation />
-                <div className="border-t border-white/10 p-5">
+                <div className="shrink-0 border-t border-white/10 p-5">
                     <div className="rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.08] to-white/[0.03] p-4">
                         <div className="flex items-center gap-3">
                             <div className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${roleAccent} text-white shadow-lg`}><BookOpenText size={17} /></div>
@@ -211,7 +211,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                                 <button onClick={() => setNotifOpen(false)} className="text-slate-400 hover:text-slate-600"><X size={16} /></button>
                                             </div>
                                         </div>
-                                        <div className="max-h-80 overflow-y-auto">
+                                        <div className="max-h-[min(24rem,55vh)] overflow-y-auto">
                                             {notifications.length === 0 ? (
                                                 <p className="px-4 py-8 text-center text-sm text-slate-400">Aucune notification</p>
                                             ) : notifications.map((n) => (
