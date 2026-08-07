@@ -1,5 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import UserAvatar from '@/Components/UserAvatar';
+import TableScroll from '@/Components/TableScroll';
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import {
@@ -369,7 +370,7 @@ export default function Users({ users = [], stats = {} }) {
                             <h2 className="text-base font-semibold text-slate-950">Enseignants</h2>
                             <p className="mt-1 text-sm text-slate-500">Liste des enseignants et leurs informations.</p>
                         </div>
-                        <div className="overflow-x-auto">
+                        <TableScroll>
                             <table className="w-full text-left text-sm">
                                 <thead>
                                     <tr className="border-b border-slate-200/80 bg-slate-50/50">
@@ -421,7 +422,7 @@ export default function Users({ users = [], stats = {} }) {
                                     )}
                                 </tbody>
                             </table>
-                        </div>
+                        </TableScroll>
                     </section>
                 )}
             </div>

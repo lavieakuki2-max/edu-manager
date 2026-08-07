@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import TableScroll from '@/Components/TableScroll';
 import { Head, Link, router } from '@inertiajs/react';
 import {
     Briefcase, Building2, Calendar, Clock, Search, Users, FileText,
@@ -125,7 +126,7 @@ export default function Stages({ stages = [], stats = {}, filieres = [], filters
                             <p className="text-sm text-slate-500">Aucun stage trouvé.</p>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
+                        <TableScroll>
                             <table className="w-full text-left text-sm">
                                 <thead>
                                     <tr className="border-b border-slate-200">
@@ -193,7 +194,7 @@ export default function Stages({ stages = [], stats = {}, filieres = [], filters
                                     ))}
                                 </tbody>
                             </table>
-                        </div>
+                        </TableScroll>
                     )}
                 </div>
             </div>

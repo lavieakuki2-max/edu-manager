@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import TableScroll from '@/Components/TableScroll';
 import { Head, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import {
@@ -165,7 +166,7 @@ export default function Soutenances({ soutenances = [], monRole, enseignantId })
                         </div>
                     </div>
 
-                    <div className="overflow-x-auto">
+                    <TableScroll>
                         <table className="w-full text-left text-sm">
                             <thead>
                                 <tr className="border-b border-slate-200/80 bg-slate-50/50">
@@ -281,7 +282,7 @@ export default function Soutenances({ soutenances = [], monRole, enseignantId })
                                                         </button>
                                                     )}
                                                     {soutenance.remarques && (
-                                                        <span className="text-xs text-slate-400 italic line-clamp-1 max-w-[120px]" title={soutenance.remarques}>
+                                                        <span className="text-xs text-slate-400 italic max-w-[120px] truncate" title={soutenance.remarques}>
                                                             "{soutenance.remarques}"
                                                         </span>
                                                     )}
@@ -292,7 +293,7 @@ export default function Soutenances({ soutenances = [], monRole, enseignantId })
                                 })}
                             </tbody>
                         </table>
-                    </div>
+                    </TableScroll>
 
                     {filtered.length === 0 && (
                         <div className="p-16 text-center">

@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import TableScroll from '@/Components/TableScroll';
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import {
@@ -51,7 +52,7 @@ export default function Documents({ documents = [] }) {
                         </div>
                     </div>
 
-                    <div className="overflow-x-auto">
+                    <TableScroll>
                         <table className="w-full text-left text-sm">
                             <thead>
                                 <tr className="border-b border-slate-200/80 bg-slate-50/50">
@@ -121,7 +122,7 @@ export default function Documents({ documents = [] }) {
                                 ))}
                             </tbody>
                         </table>
-                    </div>
+                    </TableScroll>
 
                     {filtered.length === 0 && (
                         <div className="p-16 text-center">

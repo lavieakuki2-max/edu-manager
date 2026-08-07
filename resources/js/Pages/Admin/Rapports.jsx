@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import TableScroll from '@/Components/TableScroll';
 import { Head, Link } from '@inertiajs/react';
 import { useState } from 'react';
 import {
@@ -320,7 +321,7 @@ export default function Rapports({ projets = [], documents = [], stats = {} }) {
                         <h2 className="text-base font-semibold text-slate-950">Livrables et Fichiers Déposés</h2>
                         <p className="mt-1 text-sm text-slate-500">Mémoires, rapports de stage et documents déposés par les étudiants.</p>
                     </div>
-                    <div className="overflow-x-auto">
+                    <TableScroll>
                         <table className="w-full text-left text-sm">
                             <thead>
                                 <tr className="border-b border-slate-200/80 bg-slate-50/50">
@@ -358,7 +359,7 @@ export default function Rapports({ projets = [], documents = [], stats = {} }) {
                                 )}
                             </tbody>
                         </table>
-                    </div>
+                    </TableScroll>
                 </section>
 
                 <section className="panel-card overflow-hidden">
@@ -387,7 +388,7 @@ export default function Rapports({ projets = [], documents = [], stats = {} }) {
                             </div>
                         </div>
                     </div>
-                    <div className="overflow-x-auto">
+                    <TableScroll>
                         <table className="w-full text-left text-sm">
                             <thead>
                                 <tr className="border-b border-slate-200/80 bg-slate-50/50">
@@ -443,7 +444,7 @@ export default function Rapports({ projets = [], documents = [], stats = {} }) {
                                 )}
                             </tbody>
                         </table>
-                    </div>
+                    </TableScroll>
                 </section>
             </div>
         </AuthenticatedLayout>

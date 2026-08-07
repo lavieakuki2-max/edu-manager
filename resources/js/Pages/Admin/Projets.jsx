@@ -1,4 +1,5 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import TableScroll from '@/Components/TableScroll';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import {
     ArrowUpRight, Award, BookOpen, Briefcase, CalendarRange, CheckCircle2, ChevronDown, ChevronUp,
@@ -196,7 +197,7 @@ export default function AdminProjets({ projets, stats, enseignants, filieres, an
                         )}
                     </div>
 
-                    <div className="overflow-x-auto">
+                    <TableScroll>
                         <table className="w-full text-left text-sm">
                             <thead>
                                 <tr className="border-b border-slate-200/80 bg-slate-50/50">
@@ -341,7 +342,7 @@ export default function AdminProjets({ projets, stats, enseignants, filieres, an
                                 )}
                             </tbody>
                         </table>
-                    </div>
+                    </TableScroll>
                 </div>
             </div>
 
