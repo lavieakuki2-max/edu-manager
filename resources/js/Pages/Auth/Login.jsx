@@ -5,7 +5,8 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { Briefcase, GraduationCap, Shield } from 'lucide-react';
+import { Briefcase, GraduationCap, Shield, Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
 
 export default function Login({ status, canResetPassword, demoAccess = false }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -13,6 +14,7 @@ export default function Login({ status, canResetPassword, demoAccess = false }) 
         password: '',
         remember: false,
     });
+    const [showPassword, setShowPassword] = useState(false);
 
     const submit = (e) => {
         e.preventDefault();
@@ -63,15 +65,26 @@ export default function Login({ status, canResetPassword, demoAccess = false }) 
 
                 <div>
                     <InputLabel htmlFor="password" value="Mot de passe" className="text-slate-300" />
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full border-white/10 bg-white/10 text-base text-white placeholder-slate-400 focus:border-blue-400 focus:ring-blue-400/20 sm:text-sm"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
+                    <div className="relative">
+                        <TextInput
+                            id="password"
+                            type={showPassword ? 'text' : 'password'}
+                            name="password"
+                            value={data.password}
+                            className="mt-1 block w-full border-white/10 bg-white/10 text-base text-white placeholder-slate-400 focus:border-blue-400 focus:ring-blue-400/20 sm:text-sm pr-11"
+                            autoComplete="current-password"
+                            onChange={(e) => setData('password', e.target.value)}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition"
+                            aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                            tabIndex="-1"
+                        >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    </div>
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
