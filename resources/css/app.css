@@ -151,3 +151,17 @@
 .overflow-x-auto > table.w-full {
     min-width: 640px;
 }
+
+/* Keep native form controls readable on the dark auth pages (prevents invisible text on iOS/Chrome) */
+[color-scheme="dark"] input {
+    -webkit-text-fill-color: currentColor;
+}
+
+[color-scheme="dark"] input:-webkit-autofill,
+[color-scheme="dark"] input:-webkit-autofill:hover,
+[color-scheme="dark"] input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #fff;
+    -webkit-box-shadow: 0 0 0 1000px rgba(30, 41, 59, 0.9) inset;
+    box-shadow: 0 0 0 1000px rgba(30, 41, 59, 0.9) inset;
+    transition: background-color 9999s ease-in-out 0s;
+}

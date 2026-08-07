@@ -3,7 +3,7 @@ import { GraduationCap, ShieldCheck } from 'lucide-react';
 
 export default function GuestLayout({ children }) {
     return (
-        <div className="relative min-h-dvh overflow-x-clip bg-slate-950 text-white">
+        <div className="relative min-h-dvh overflow-x-clip bg-slate-950 text-white [color-scheme:dark]">
             <div className="grid min-h-dvh lg:grid-cols-[1.05fr_.95fr]">
                 <aside className="relative hidden overflow-hidden bg-gradient-to-br from-blue-900 via-indigo-800 to-indigo-950 p-12 lg:flex lg:flex-col lg:justify-between">
                     <div className="absolute -right-32 top-20 h-96 w-96 rounded-full bg-white/8 blur-3xl" />
