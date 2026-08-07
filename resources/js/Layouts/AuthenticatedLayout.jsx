@@ -123,7 +123,7 @@ export default function AuthenticatedLayout({ header, children }) {
     );
 
     return (
-        <div className="min-h-screen overflow-x-hidden bg-[#F8FAFC] text-slate-700">
+        <div className="min-h-dvh overflow-x-hidden bg-[#F8FAFC] text-slate-700">
             {toast && (
                 <div className={`fixed inset-x-4 top-4 z-[100] rounded-xl px-5 py-3 text-center text-sm font-medium shadow-lg transition-all duration-300 sm:inset-x-auto sm:right-4 sm:left-auto sm:text-left ${toast.type === 'success' ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
                     {toast.message}

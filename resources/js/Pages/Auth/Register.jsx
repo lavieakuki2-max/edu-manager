@@ -25,7 +25,7 @@ export default function Register() {
         post(route('register'), { onFinish: () => reset('password', 'password_confirmation') });
     };
 
-    const inputClass = "mt-1 block w-full rounded-xl border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder-slate-400 shadow-sm outline-none transition focus:border-blue-400 focus:bg-white/15 focus:ring-4 focus:ring-blue-400/20";
+    const inputClass = "mt-1 block w-full rounded-xl border-white/10 bg-white/10 px-4 py-3 text-base text-white placeholder-slate-400 shadow-sm outline-none transition focus:border-blue-400 focus:bg-white/15 focus:ring-4 focus:ring-blue-400/20 sm:text-sm";
     const labelClass = "block text-sm font-medium text-slate-300";
 
     return (
@@ -41,7 +41,7 @@ export default function Register() {
             </div>
 
             <form onSubmit={submit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
                         <InputLabel htmlFor="prenom" value="Prénom" className={labelClass} />
                         <TextInput id="prenom" value={data.prenom} className={inputClass} autoComplete="given-name" isFocused onChange={(e) => setData('prenom', e.target.value)} required />
@@ -74,7 +74,7 @@ export default function Register() {
 
                 <div>
                     <InputLabel htmlFor="role" value="Je suis" className={labelClass} />
-                    <select id="role" value={data.role} onChange={(e) => setData('role', e.target.value)} className="mt-1 block w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-sm text-white shadow-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-400/20">
+                    <select id="role" value={data.role} onChange={(e) => setData('role', e.target.value)} className="mt-1 block w-full rounded-xl border border-white/10 bg-white/10 px-4 py-3 text-base text-white shadow-sm outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-400/20 sm:text-sm">
                         <option value="etudiant" className="text-slate-900">Étudiant</option>
                         <option value="enseignant" className="text-slate-900">Enseignant</option>
                     </select>
@@ -88,7 +88,7 @@ export default function Register() {
                             <TextInput id="matricule" value={data.matricule} className={inputClass} onChange={(e) => setData('matricule', e.target.value)} required />
                             <InputError message={errors.matricule} className="mt-2" />
                         </div>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             <div>
                                 <InputLabel htmlFor="classe" value="Classe" className={labelClass} />
                                 <TextInput id="classe" value={data.classe} className={inputClass} placeholder="ex: L2" onChange={(e) => setData('classe', e.target.value)} required />
@@ -104,7 +104,7 @@ export default function Register() {
                 )}
 
                 {data.role === 'enseignant' && (
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <div>
                             <InputLabel htmlFor="grade" value="Grade" className={labelClass} />
                             <TextInput id="grade" value={data.grade} className={inputClass} placeholder="ex: Professeur" onChange={(e) => setData('grade', e.target.value)} required />
@@ -118,9 +118,9 @@ export default function Register() {
                     </div>
                 )}
 
-                <div className="flex items-center justify-between pt-2">
+                <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
                     <Link href={route('login')} className="text-sm text-blue-400 hover:text-blue-300 transition">Déjà inscrit ?</Link>
-                    <PrimaryButton className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:from-blue-700 hover:to-indigo-700 transition shadow-lg shadow-blue-600/25" disabled={processing}>
+                    <PrimaryButton className="w-full justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:from-blue-700 hover:to-indigo-700 transition shadow-lg shadow-blue-600/25 sm:w-auto" disabled={processing}>
                         Créer le compte
                     </PrimaryButton>
                 </div>

@@ -3,8 +3,8 @@ import { GraduationCap, ShieldCheck } from 'lucide-react';
 
 export default function GuestLayout({ children }) {
     return (
-        <div className="min-h-screen bg-slate-950 text-white">
-            <div className="grid min-h-screen lg:grid-cols-[1.05fr_.95fr]">
+        <div className="relative min-h-dvh overflow-x-clip bg-slate-950 text-white">
+            <div className="grid min-h-dvh lg:grid-cols-[1.05fr_.95fr]">
                 <aside className="relative hidden overflow-hidden bg-gradient-to-br from-blue-900 via-indigo-800 to-indigo-950 p-12 lg:flex lg:flex-col lg:justify-between">
                     <div className="absolute -right-32 top-20 h-96 w-96 rounded-full bg-white/8 blur-3xl" />
                     <Link href="/" className="relative flex items-center gap-3 text-xl font-bold">
@@ -23,17 +23,17 @@ export default function GuestLayout({ children }) {
                     </div>
                 </aside>
 
-                <main className="relative flex items-center justify-center px-6 py-12 sm:px-10">
+                <main className="relative flex items-center justify-center px-4 py-8 sm:px-10 sm:py-12">
                     <div className="pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-blue-500/10 blur-3xl" />
                     <div className="pointer-events-none absolute -left-24 bottom-10 h-72 w-72 rounded-full bg-indigo-500/10 blur-3xl" />
                     <div className="relative w-full max-w-md">
-                        <Link href="/" className="mb-10 flex items-center gap-3 text-xl font-bold lg:hidden">
+                        <Link href="/" className="mb-8 flex items-center gap-3 text-xl font-bold lg:hidden">
                             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500 text-white">
                                 <GraduationCap size={21} />
                             </span>
                             EduManager
                         </Link>
-                        <div className="rounded-2xl border border-white/10 bg-white/5 p-7 shadow-2xl backdrop-blur-xl sm:p-9">
+                        <div className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl sm:p-9">
                             {children}
                         </div>
                     </div>

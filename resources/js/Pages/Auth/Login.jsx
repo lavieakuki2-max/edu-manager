@@ -53,7 +53,7 @@ export default function Login({ status, canResetPassword }) {
                         type="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full border-white/10 bg-white/10 text-white placeholder-slate-400 focus:border-blue-400 focus:ring-blue-400/20"
+                        className="mt-1 block w-full border-white/10 bg-white/10 text-base text-white placeholder-slate-400 focus:border-blue-400 focus:ring-blue-400/20 sm:text-sm"
                         autoComplete="username"
                         isFocused={true}
                         onChange={(e) => setData('email', e.target.value)}
@@ -68,14 +68,14 @@ export default function Login({ status, canResetPassword }) {
                         type="password"
                         name="password"
                         value={data.password}
-                        className="mt-1 block w-full border-white/10 bg-white/10 text-white placeholder-slate-400 focus:border-blue-400 focus:ring-blue-400/20"
+                        className="mt-1 block w-full border-white/10 bg-white/10 text-base text-white placeholder-slate-400 focus:border-blue-400 focus:ring-blue-400/20 sm:text-sm"
                         autoComplete="current-password"
                         onChange={(e) => setData('password', e.target.value)}
                     />
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="flex items-center justify-between">
+                <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
                     <label className="flex items-center gap-2">
                         <Checkbox
                             name="remember"
@@ -108,11 +108,11 @@ export default function Login({ status, canResetPassword }) {
                     <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10" /></div>
                     <div className="relative flex justify-center text-xs uppercase"><span className="bg-slate-900 px-3 text-slate-400">Accès rapide (démo)</span></div>
                 </div>
-                <div className="mt-4 grid grid-cols-3 gap-3">
+                <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
                     <button
                         type="button"
                         onClick={() => quickLogin('admin@uniluk.edu', 'password')}
-                        className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-4 text-white transition hover:bg-white/10 hover:border-amber-400/40"
+                        className="flex flex-col items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 p-3 text-white transition hover:bg-white/10 hover:border-amber-400/40 sm:gap-2 sm:p-4"
                     >
                         <Shield size={20} className="text-amber-400" />
                         <span className="text-xs font-medium">Admin</span>
@@ -120,7 +120,7 @@ export default function Login({ status, canResetPassword }) {
                     <button
                         type="button"
                         onClick={() => quickLogin('ngoy@uniluk.edu', 'password')}
-                        className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-4 text-white transition hover:bg-white/10 hover:border-blue-400/40"
+                        className="flex flex-col items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 p-3 text-white transition hover:bg-white/10 hover:border-blue-400/40 sm:gap-2 sm:p-4"
                     >
                         <GraduationCap size={20} className="text-blue-400" />
                         <span className="text-xs font-medium">Enseignant</span>
@@ -128,7 +128,7 @@ export default function Login({ status, canResetPassword }) {
                     <button
                         type="button"
                         onClick={() => quickLogin('kabongo@uniluk.edu', 'password')}
-                        className="flex flex-col items-center gap-2 rounded-xl border border-white/10 bg-white/5 p-4 text-white transition hover:bg-white/10 hover:border-emerald-400/40"
+                        className="flex flex-col items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 p-3 text-white transition hover:bg-white/10 hover:border-emerald-400/40 sm:gap-2 sm:p-4"
                     >
                         <Briefcase size={20} className="text-emerald-400" />
                         <span className="text-xs font-medium">Étudiant</span>
