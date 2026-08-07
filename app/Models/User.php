@@ -26,6 +26,7 @@ class User extends Authenticatable
         'photo_profil',
         'statut',
         'motif_rejet',
+        'must_change_password',
         'email_verified_at',
     ];
 

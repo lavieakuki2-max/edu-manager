@@ -45,9 +45,11 @@ RUN chmod -R 755 /var/www/public
 EXPOSE 8000
 
 # 9. Script de démarrage sécurisé
+# migrate --force applique les migrations en attente au déploiement.
 # db:seed --class=AdminSeeder garantit le compte admin (idempotent, sans toucher aux autres comptes)
 CMD php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache \
+    && php artisan migrate --force \
     && php artisan db:seed --class=Database\\Seeders\\AdminSeeder --force \
     && php artisan serve --host=0.0.0.0 --port=8000

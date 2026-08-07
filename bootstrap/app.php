@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->web(append: [
             \App\Http\Middleware\HandleInertiaRequests::class,
+            \App\Http\Middleware\EnsurePasswordChanged::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
             // SecurityHeaders placé à la fin pour éviter d'altérer les en-têtes d'Inertia
             \App\Http\Middleware\SecurityHeaders::class, 

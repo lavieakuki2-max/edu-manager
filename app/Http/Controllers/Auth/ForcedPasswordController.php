@@ -7,11 +7,21 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
+use Inertia\Inertia;
+use Inertia\Response;
 
-class PasswordController extends Controller
+class ForcedPasswordController extends Controller
 {
     /**
-     * Update the user's password.
+     * Display the forced password change page.
+     */
+    public function show(): Response
+    {
+        return Inertia::render('Auth/ForcedPassword');
+    }
+
+    /**
+     * Update the user's password and clear the forced-change flag.
      */
     public function update(Request $request): RedirectResponse
     {
@@ -25,6 +35,6 @@ class PasswordController extends Controller
             'must_change_password' => false,
         ]);
 
-        return back();
+        return redirect()->route('dashboard');
     }
 }

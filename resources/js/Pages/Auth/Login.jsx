@@ -7,7 +7,7 @@ import GuestLayout from '@/Layouts/GuestLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Briefcase, GraduationCap, Shield } from 'lucide-react';
 
-export default function Login({ status, canResetPassword }) {
+export default function Login({ status, canResetPassword, demoAccess = false }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -103,11 +103,12 @@ export default function Login({ status, canResetPassword }) {
                 </p>
             </form>
 
-            <div className="mt-8">
-                <div className="relative">
-                    <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10" /></div>
-                    <div className="relative flex justify-center text-xs uppercase"><span className="bg-slate-900 px-3 text-slate-400">Accès rapide (démo)</span></div>
-                </div>
+            {demoAccess && (
+                <div className="mt-8">
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-white/10" /></div>
+                        <div className="relative flex justify-center text-xs uppercase"><span className="bg-slate-900 px-3 text-slate-400">Accès rapide (démo)</span></div>
+                    </div>
                 <div className="mt-4 grid grid-cols-3 gap-2 sm:gap-3">
                     <button
                         type="button"
@@ -134,7 +135,8 @@ export default function Login({ status, canResetPassword }) {
                         <span className="text-xs font-medium">Étudiant</span>
                     </button>
                 </div>
-            </div>
+                </div>
+            )}
         </GuestLayout>
     );
 }

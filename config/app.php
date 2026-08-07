@@ -30,6 +30,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Demo access
+    |--------------------------------------------------------------------------
+    |
+    | Lorsque ce flag est actif, la page de connexion affiche les boutons
+    | "Accès rapide (démo)" permettant de se connecter avec des comptes de
+    | test. En production, il doit rester désactivé (false).
+    |
+    */
+
+    'demo_access' => env('DEMO_ACCESS', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Debug Mode
     |--------------------------------------------------------------------------
     |

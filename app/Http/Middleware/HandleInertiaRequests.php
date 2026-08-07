@@ -33,6 +33,7 @@ class HandleInertiaRequests extends Middleware
             'settings' => function () {
                 return function_exists('institution') ? institution() : null;
             },
+            'demoAccess' => fn () => (bool) config('app.demo_access'),
             'unreadNotifications' => fn () => $request->user()
                 ? Notification::where('user_id', $request->user()->id)->where('est_lu', false)->count()
                 : 0,
