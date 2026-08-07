@@ -44,6 +44,20 @@ export default function AuthenticatedLayout({ header, children }) {
         }
     }, [notifOpen]);
 
+    useEffect(() => {
+        const poll = () => {
+            if (document.visibilityState !== 'visible') return;
+            fetch(route('notifications.unreadCount'))
+                .then((r) => r.json())
+                .then((data) => setUnreadCount(data.unread_count || 0))
+                .catch(() => {});
+        };
+
+        poll();
+        const id = setInterval(poll, 30000);
+        return () => clearInterval(id);
+    }, []);
+
     const markAsRead = useCallback(async (notif) => {
         setNotifOpen(false);
         setNotifications((prev) => prev.filter((n) => n.id !== notif.id));
