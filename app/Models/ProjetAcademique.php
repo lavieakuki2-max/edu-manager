@@ -35,6 +35,11 @@ class ProjetAcademique extends Model
         return $this->hasMany(Document::class, 'projet_id');
     }
 
+    public function chapitres()
+    {
+        return $this->hasMany(Chapitre::class, 'projet_id')->orderBy('numero');
+    }
+
     public function commentaires()
     {
         return $this->hasMany(Commentaire::class, 'projet_id');

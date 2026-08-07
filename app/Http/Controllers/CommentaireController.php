@@ -18,6 +18,7 @@ class CommentaireController extends Controller
             $projet->commentaires()->create([
                 'user_id' => $request->user()->id,
                 'contenu' => $validated['contenu'],
+                'document_id' => $validated['document_id'] ?? null,
             ]);
 
             NotificationService::notifierCommentaire($projet, $request->user());

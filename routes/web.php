@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ProjetController as AdminProjetController;
 use App\Http\Controllers\Admin\RapportController;
 use App\Http\Controllers\Admin\StageSuiviController as AdminStageSuiviController;
 use App\Http\Controllers\CommentaireController;
+use App\Http\Controllers\ChapitreController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\EntrepriseController;
@@ -41,6 +42,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
     Route::post('/projets/{projet}/documents', [DocumentController::class, 'store'])->middleware('role:etudiant,enseignant')->name('documents.store');
     Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
+
+    Route::post('/projets/{projet}/chapitres', [ChapitreController::class, 'store'])->middleware('role:admin,enseignant')->name('projets.chapitres.store');
+    Route::patch('/chapitres/{chapitre}/statut', [ChapitreController::class, 'updateStatut'])->middleware('role:admin,enseignant')->name('chapitres.statut');
+    Route::delete('/chapitres/{chapitre}', [ChapitreController::class, 'destroy'])->middleware('role:admin,enseignant')->name('chapitres.destroy');
 
     Route::get('/entreprises/search', [EntrepriseController::class, 'search'])->name('entreprises.search');
 

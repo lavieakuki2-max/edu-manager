@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Projets;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCommentaireRequest extends FormRequest
 {
@@ -25,6 +26,11 @@ class StoreCommentaireRequest extends FormRequest
     {
         return [
             'contenu' => ['required', 'string', 'max:2000'],
+            'document_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('documents', 'id')->where(fn ($q) => $q->where('projet_id', $this->route('projet')->id)),
+            ],
         ];
     }
 }

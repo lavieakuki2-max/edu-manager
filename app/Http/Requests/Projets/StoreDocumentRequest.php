@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Projets;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreDocumentRequest extends FormRequest
 {
@@ -25,6 +26,11 @@ class StoreDocumentRequest extends FormRequest
     {
         return [
             'fichier' => ['required', 'file', 'mimes:pdf', 'max:10240'],
+            'chapitre_id' => [
+                'nullable',
+                'integer',
+                Rule::exists('chapitres', 'id')->where(fn ($q) => $q->where('projet_id', $this->route('projet')->id)),
+            ],
         ];
     }
 }

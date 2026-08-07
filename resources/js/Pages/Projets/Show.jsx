@@ -5,6 +5,8 @@ import {
     ArrowLeft, BookOpen, Briefcase, CheckCircle2, Clock, Download, Eye, FileText, History, Send, Shield, UploadCloud,
 } from 'lucide-react';
 import { useState } from 'react';
+import ChapitreCard from './Partials/ChapitreCard';
+import DiscussionFil from './Partials/DiscussionFil';
 
 const statusColors = {
     'Sujet Soumis': 'bg-amber-50 text-amber-700 border border-amber-200',
@@ -65,13 +67,14 @@ const typeBg = {
     Projet_Tutore: 'bg-amber-50 text-amber-600',
 };
 
-export default function Show({ projet, canAdmin, canComment = false, canUpload = false, isSupervision = false, availableTransitions = [], workflowStatuses = [] }) {
+export default function Show({ projet, canAdmin, canComment = false, canUpload = false, isSupervision = false, canManageChapitres = false, availableTransitions = [], workflowStatuses = [] }) {
     const [activeTab, setActiveTab] = useState('info');
     const [showUpload, setShowUpload] = useState(false);
     const [showTransition, setShowTransition] = useState(false);
 
     const commentForm = useForm({ contenu: '' });
-    const uploadForm = useForm({ fichier: null });
+    const uploadForm = useForm({ fichier: null, chapitre_id: '' });
+    const chapitreForm = useForm({ titre: '' });
     const statutForm = useForm({ statut_actuel: '', commentaire: '' });
 
     const submitComment = (e) => {
@@ -102,15 +105,26 @@ export default function Show({ projet, canAdmin, canComment = false, canUpload =
         });
     };
 
+    const submitChapitre = (e) => {
+        e.preventDefault();
+        chapitreForm.post(route('projets.chapitres.store', projet.id), {
+            onSuccess: () => chapitreForm.reset('titre'),
+        });
+    };
+
     const steps = workflowSteps[projet.type] || workflowSteps.Stage;
     const activeIdx = getWorkflowIndex(projet.statut_actuel);
     const TypeIcon = typeIcons[projet.type] || Briefcase;
     const typeColor = typeColors[projet.type] || typeColors.Stage;
 
+    const chapitreMap = Object.fromEntries((projet.chapitres || []).map((c) => [c.id, c]));
+    const projectComments = (projet.commentaires || []).filter((c) => !c.document_id);
+
     const tabs = [
         { key: 'info', label: 'Informations' },
         { key: 'documents', label: `Documents (${projet.documents?.length || 0})` },
-        { key: 'commentaires', label: `Discussion (${projet.commentaires?.length || 0})` },
+        ...(projet.type === 'Memoire' ? [{ key: 'chapitres', label: `Chapitres (${projet.chapitres?.length || 0})` }] : []),
+        { key: 'commentaires', label: `Discussion (${projectComments.length})` },
         { key: 'historique', label: `Historique (${projet.historique?.length || 0})` },
     ];
 
@@ -320,12 +334,24 @@ export default function Show({ projet, canAdmin, canComment = false, canUpload =
                                     </button>
                                 </div>
                                 {showUpload && (
-                                    <form onSubmit={submitUpload} className="flex items-end gap-4">
+                                    <form onSubmit={submitUpload} className="flex flex-wrap items-end gap-4">
                                         <label className="flex-1 cursor-pointer rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-4 text-center text-sm text-slate-600 hover:bg-slate-100">
                                             <UploadCloud size={18} className="mx-auto mb-1" />
                                             {uploadForm.data.fichier ? uploadForm.data.fichier.name : 'Sélectionner un PDF'}
                                             <input type="file" accept="application/pdf" className="hidden" onChange={(e) => uploadForm.setData('fichier', e.target.files[0])} />
                                         </label>
+                                        {projet.type === 'Memoire' && (
+                                            <select
+                                                className="soft-input text-sm"
+                                                value={uploadForm.data.chapitre_id}
+                                                onChange={(e) => uploadForm.setData('chapitre_id', e.target.value)}
+                                            >
+                                                <option value="">Document général</option>
+                                                {(projet.chapitres || []).map((ch) => (
+                                                    <option key={ch.id} value={ch.id}>{ch.numero}. {ch.titre}</option>
+                                                ))}
+                                            </select>
+                                        )}
                                         <button type="submit" disabled={uploadForm.processing || !uploadForm.data.fichier} className="soft-button soft-button-primary disabled:opacity-50 text-xs">
                                             Envoyer
                                         </button>
@@ -349,27 +375,74 @@ export default function Show({ projet, canAdmin, canComment = false, canUpload =
 
                         <div className="panel-card overflow-hidden">
                             <div className="divide-y divide-slate-100">
-                                {projet.documents?.map((doc) => (
-                                    <div key={doc.id} className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
-                                        <div className="flex items-start gap-3">
-                                            <div className="rounded-2xl bg-red-50 p-3 text-red-600"><FileText size={18} /></div>
-                                            <div>
-                                                <p className="font-medium text-slate-950">{doc.titre_fichier}</p>
-                                                <p className="text-sm text-slate-500">
-                                                    v{doc.version} · {doc.auteur?.prenom} {doc.auteur?.nom} · {new Date(doc.date_depot).toLocaleDateString('fr-FR')}
-                                                </p>
+                                {projet.documents?.map((doc) => {
+                                    const chapitre = chapitreMap[doc.chapitre_id];
+                                    return (
+                                        <div key={doc.id} className="p-5">
+                                            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                                <div className="flex items-start gap-3">
+                                                    <div className="rounded-2xl bg-red-50 p-3 text-red-600"><FileText size={18} /></div>
+                                                    <div>
+                                                        <p className="font-medium text-slate-950">{doc.titre_fichier}</p>
+                                                        <p className="text-sm text-slate-500">
+                                                            v{doc.version} · {doc.auteur?.prenom} {doc.auteur?.nom} · {new Date(doc.date_depot).toLocaleDateString('fr-FR')}
+                                                            {chapitre && <span className="text-slate-400"> · Chapitre {chapitre.numero} — {chapitre.titre}</span>}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <a href={route('documents.download', doc.id)} className="soft-button soft-button-secondary w-fit text-xs">
+                                                    <Download size={14} /> Télécharger
+                                                </a>
                                             </div>
+                                            <DiscussionFil document={doc} projetId={projet.id} commentaires={projet.commentaires} canComment={canComment} isSupervision={isSupervision} />
                                         </div>
-                                        <a href={route('documents.download', doc.id)} className="soft-button soft-button-secondary w-fit text-xs">
-                                            <Download size={14} /> Télécharger
-                                        </a>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                                 {(!projet.documents || projet.documents.length === 0) && (
                                     <div className="p-10 text-center text-sm text-slate-500">Aucun document déposé.</div>
                                 )}
                             </div>
                         </div>
+                    </div>
+                )}
+
+                {activeTab === 'chapitres' && (
+                    <div className="space-y-4">
+                        {canManageChapitres && (
+                            <div className="panel-card p-6">
+                                <h3 className="text-base font-semibold text-slate-950">Ajouter un chapitre</h3>
+                                <p className="mt-1 text-sm text-slate-500">
+                                    Le plan validé se traduit en chapitres que l'encadreur valide un à un (Validation par chapitre).
+                                </p>
+                                <form onSubmit={submitChapitre} className="mt-3 flex flex-wrap items-end gap-3">
+                                    <input
+                                        type="text"
+                                        className="soft-input min-w-[260px] flex-1 text-sm"
+                                        placeholder="Ex : Chapitre 4 — Expérimentation"
+                                        value={chapitreForm.data.titre}
+                                        onChange={(e) => chapitreForm.setData('titre', e.target.value)}
+                                    />
+                                    <button type="submit" disabled={chapitreForm.processing || !chapitreForm.data.titre.trim()} className="soft-button soft-button-primary disabled:opacity-50 text-xs">
+                                        Ajouter
+                                    </button>
+                                </form>
+                                {chapitreForm.errors.titre && <p className="mt-2 text-sm text-red-600">{chapitreForm.errors.titre}</p>}
+                            </div>
+                        )}
+
+                        {projet.chapitres?.map((chapitre) => (
+                            <ChapitreCard
+                                key={chapitre.id}
+                                chapitre={chapitre}
+                                projet={projet}
+                                canManage={canManageChapitres}
+                                canComment={canComment}
+                                isSupervision={isSupervision}
+                            />
+                        ))}
+                        {(!projet.chapitres || projet.chapitres.length === 0) && (
+                            <div className="panel-card p-10 text-center text-sm text-slate-500">Aucun chapitre défini pour ce mémoire.</div>
+                        )}
                     </div>
                 )}
 
@@ -389,7 +462,7 @@ export default function Show({ projet, canAdmin, canComment = false, canUpload =
 
                         <div className="panel-card overflow-hidden">
                             <div className="divide-y divide-slate-100">
-                                {projet.commentaires?.map((c) => (
+                                {projectComments.map((c) => (
                                     <div key={c.id} className="p-5">
                                         <div className="flex items-start gap-3">
                                             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-950 text-xs font-bold text-white">
@@ -409,7 +482,7 @@ export default function Show({ projet, canAdmin, canComment = false, canUpload =
                                         </div>
                                     </div>
                                 ))}
-                                {(!projet.commentaires || projet.commentaires.length === 0) && (
+                                {projectComments.length === 0 && (
                                     <div className="p-10 text-center text-sm text-slate-500">Aucun commentaire.</div>
                                 )}
                             </div>

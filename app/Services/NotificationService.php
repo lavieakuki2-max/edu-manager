@@ -191,6 +191,31 @@ class NotificationService
         }
     }
 
+    public static function notifierChapitreStatut(\App\Models\Chapitre $chapitre, User $auteur): void
+    {
+        $projet = $chapitre->projet;
+
+        $destinataires = collect();
+
+        if ($projet->enseignant && $projet->enseignant->user && $projet->enseignant->user->id !== $auteur->id) {
+            $destinataires->push($projet->enseignant->user);
+        }
+        if ($projet->etudiant && $projet->etudiant->user && $projet->etudiant->user->id !== $auteur->id) {
+            $destinataires->push($projet->etudiant->user);
+        }
+
+        $url = route('projets.show', $projet->id) . '#chapitres';
+
+        foreach ($destinataires as $destinataire) {
+            self::creer(
+                $destinataire,
+                'Chapitre mis à jour',
+                "Le chapitre \"{$chapitre->titre}\" du projet \"{$projet->titre}\" est passé à \"{$chapitre->statut}\".",
+                $url
+            );
+        }
+    }
+
     public static function notifierDocumentDepose(ProjetAcademique $projet, User $auteur, string $nomFichier): void
     {
         $destinataires = collect();

@@ -59,6 +59,7 @@ class ProjetController extends Controller
             'memoire',
             'stage.entreprise',
             'documents.auteur',
+            'chapitres.documents.auteur',
             'commentaires.auteur',
             'soutenance',
             'historique.user',
@@ -72,6 +73,8 @@ class ProjetController extends Controller
                 : $projet->etudiant_id === $user->etudiant?->id,
             'canUpload' => $user->role === 'etudiant' || $user->role === 'enseignant',
             'isSupervision' => $user->role === 'admin',
+            'canManageChapitres' => $user->role === 'admin'
+                || ($user->role === 'enseignant' && $projet->enseignant_id === $user->enseignant?->id),
             'availableTransitions' => $workflow->getAvailableTransitions($projet, $user),
             'workflowStatuses' => WorkflowService::STATUSES,
         ]);
@@ -101,6 +104,15 @@ class ProjetController extends Controller
                     'theme_recherche' => $validated['theme_recherche'],
                     'mots_cles' => $validated['mots_cles'] ?? null,
                 ]);
+
+                $chapitres = ['Introduction', 'Chapitre 1', 'Chapitre 2', 'Chapitre 3', 'Conclusion'];
+                foreach ($chapitres as $i => $titre) {
+                    $projet->chapitres()->create([
+                        'titre' => $titre,
+                        'numero' => $i + 1,
+                        'statut' => 'En Attente',
+                    ]);
+                }
             } elseif ($validated['type'] === 'Stage') {
                 $entrepriseId = $validated['entreprise_id'] ?? null;
 

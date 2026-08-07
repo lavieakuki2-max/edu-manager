@@ -51,6 +51,7 @@ class DocumentController extends Controller
                 'chemin_stockage' => $path,
                 'version' => $version,
                 'date_depot' => now(),
+                'chapitre_id' => $validated['chapitre_id'] ?? null,
             ]);
 
             NotificationService::notifierDocumentDepose($projet, $request->user(), $doc->titre_fichier);
